@@ -12,8 +12,9 @@ class CharacterSheet < ApplicationRecord
 
   validates :character_name, :player_name, presence: true
   validates :character_points, :body, :mind, :soul,
-            :acv, :dcv, :health_points, :energy_points, :money,
+            :acv, :dcv, :health_points, :energy_points,
             numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :money, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
 
   # --- Hooks for future auto-calculation (optional) ---
   # Uncomment if you later want to compute derived values from core stats.
