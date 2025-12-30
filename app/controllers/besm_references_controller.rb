@@ -37,12 +37,12 @@ class BesmReferencesController < ApplicationController
 
     if @query.present?
       search_term = "%#{@query}%"
-      @attributes = BesmAttribute.where("name LIKE ? OR description LIKE ?", search_term, search_term)
-      @defects = BesmDefect.where("name LIKE ? OR description LIKE ?", search_term, search_term)
-      @enhancements = AttributeEnhancement.where("name LIKE ? OR description LIKE ?", search_term, search_term)
-      @limiters = AttributeLimiter.where("name LIKE ? OR description LIKE ?", search_term, search_term)
-      @weapon_enhancements = WeaponEnhancement.where("name LIKE ? OR description LIKE ?", search_term, search_term)
-      @weapon_limiters = WeaponLimiter.where("name LIKE ? OR description LIKE ?", search_term, search_term)
+      @attributes = BesmAttribute.where("name LIKE ?", search_term)
+      @defects = BesmDefect.where("name LIKE ?", search_term)
+      @enhancements = AttributeEnhancement.where("name LIKE ?", search_term)
+      @limiters = AttributeLimiter.where("name LIKE ?", search_term)
+      @weapon_enhancements = WeaponEnhancement.where("name LIKE ?", search_term)
+      @weapon_limiters = WeaponLimiter.where("name LIKE ?", search_term)
     else
       @attributes = []
       @defects = []

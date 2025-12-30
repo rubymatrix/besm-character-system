@@ -3,25 +3,32 @@ require 'json'
 def clean_description(text)
   return text unless text.is_a?(String)
 
-  # 1. First pass: Remove obvious PDF noise
+  # 1. First pass: Remove obvious PDF noise and strip existing bolding for idempotency
+  text.gsub!(/\*\*+/, "") # Strip any bolding from previous runs
+  
+  # Watermarks and page numbers
+  text.gsub!(/Greg Doachie Order \d+/, "")
   text.gsub!(/Greg Doachi\(e Odr2er \d+\)/, "")
   text.gsub!(/---PAGE \d+---/, "")
   text.gsub!(/PAGEPAGE\s+\d+/i, "")
-  text.gsub!(/(ATTRIBUTES|DEFECTS|ENHANCEMENTS|LIMITERS)\s+\1/i, "\\1")
+  text.gsub!(/Page \d+/, "")
   
-  # 2. Fix split words like "T unnelling" -> "Tunnelling"
-  # Look for a single uppercase letter followed by space and then lowercase letters
-  # But be careful not to catch "A character" or "I am"
+  # Noise patterns like "LLIMITERIMITER" or "AATTRIBUTETTRIBUTE"
+  text.gsub!(/([A-Z])\1([A-Z]+)\2/, "\\1\\2")
+  text.gsub!(/(ATTRIBUTES|DEFECTS|ENHANCEMENTS|LIMITERS|WEAPON ENHANCEMENTS|WEAPON LIMITERS)\s+\1/i, "\\1")
+  
+  # 2. Fix split words and hyphens
   text.gsub!(/\b(?![AI]\b)([A-Z])\s+([a-z]{2,})\b/, "\\1\\2")
-
-  # 3. Fix hyphens at end of lines
-  text.gsub!(/(\w+)-\n\s*(\w+)/, "\\1-\\2")
-
-  # 3b. Fix headers glued to end of sentences: "Weapon.HEADER"
-  text.gsub!(/([a-z]\.)([A-Z\-\s]{4,})/, "\\1\n\\2")
+  text.gsub!(/(\w+)-\s*\n\s*(\w+)/, "\\1-\\2")
+  
+  # 3. Handle headers glued to end of sentences
+  # Use a more precise regex to split headers from the following sentence
+  text.gsub!(/([a-z]\.|\))\s+([A-Z][A-Z\s\-]{3,}[A-Z])(?=\s+[a-z]|$)/, "\\1\n\\2\n")
 
   # 4. Join lines while detecting paragraphs
   text = text.gsub("\r\n", "\n")
+  noise_headers = ["ATTRIBUTES", "DEFECTS", "ENHANCEMENTS", "LIMITERS", "WEAPON ENHANCEMENTS", "WEAPON LIMITERS"]
+  
   lines = text.split("\n").map(&:strip).reject(&:empty?)
   
   cleaned_text = ""
@@ -33,57 +40,60 @@ def clean_description(text)
       
       # Header detection:
       # - ALL CAPS
-      # - OR starts with "ANIMAL FORMS", "ELEMENTAL/CHEMICAL FORMS", etc.
-      # - OR current line is very short and starts with uppercase
+      # - OR specific known header patterns
       is_all_caps = line == line.upcase && line.length > 3 && line !~ /[.!?]$/ && line !~ /^\d+$/
-      is_short_caps = line =~ /^[A-Z][A-Z\s\-]+[A-Z]$/ && line.length < 50
+      is_short_caps = line =~ /^[A-Z][A-Z\s\-]+[A-Z]$/ && line.length < 50 && line !~ /[.!?]$/
+      
+      is_noise = noise_headers.include?(line.upcase)
+      should_break = (is_all_caps || is_short_caps) && !is_noise
       
       # Paragraph break heuristic:
-      # - Current line is a header
-      # - OR previous line ended in a period and current line starts with capital AND is reasonably long (new thought)
-      #   Actually, PDF extraction is messy. Let's be conservative.
-      
-      should_break = is_all_caps || is_short_caps
-      
-      # If the previous line ended with a period and the text block is long, maybe it's a new paragraph.
-      # In BESM books, new paragraphs often start on new lines.
       if !should_break && previous_line.match?(/[.!?]$/) && line.match?(/^[A-Z]/)
-        # Check if it was a mid-sentence break or a real paragraph.
-        # This is hard. Let's look for "If ", "The ", "A ", "When " etc. at start of line.
-        if line.match?(/^(If|The|A|When|In|This|Each|To|Alternatively|Furthermore|Consequently)\b/)
+        if line.match?(/^(If|The|A|When|In|This|Each|To|Alternatively|Furthermore|Consequently|Additionally|Moreover|However|Specifically|Typically|For example)\b/)
            should_break = true
         end
       end
       
       if should_break
-        header_text = (is_all_caps || is_short_caps) ? "**#{line}**" : line
-        cleaned_text += "\n\n" + header_text
+        prefix = (is_all_caps || is_short_caps) ? "\n\n**#{line}**\n\n" : "\n\n#{line}"
+        cleaned_text += prefix
+      elsif is_noise
+        next
       else
-        cleaned_text += " " + line
+        if cleaned_text.end_with?("\n")
+          cleaned_text += line
+        else
+          cleaned_text += " " + line
+        end
       end
     end
   end
 
-  # 5. Clean up repeated phrases that occur when headers are caught multiple times
-  # (e.g. "SAMPLE ALTERNATE FORMSAMPLE ALTERNATE FORM")
-  2.times do
+  # 5. Clean up repeated phrases
+  3.times do
     cleaned_text.gsub!(/([A-Z\s]{8,})\1/, "\\1")
   end
   
-  # Clean up repeated letters at start of bolded words (e.g. **SSAMPLE**)
-  cleaned_text.gsub!(/\*\*([A-Z])([A-Z\s]{4,})\*\*/) do
-    first = $1
-    rest = $2
-    if rest.start_with?(first)
-       "**#{rest.strip}**"
+  # 6. Post-processing for space-based paragraph breaks
+  starters = "If|The|A|When|In|This|Each|To|Alternatively|Furthermore|Consequently|Additionally|Moreover|However|Specifically|Typically|For example"
+  cleaned_text.gsub!(/([.!?])\s+(#{starters})\b/, "\\1\n\n\\2")
+  
+  # Ensure block headers are properly handled if they were missed
+  cleaned_text.gsub!(/\n\s*([A-Z][A-Z\s\-]{3,}[A-Z])\s*\n/) do |match|
+    hdr = $1.strip
+    if noise_headers.include?(hdr.upcase)
+       " "
     else
-       "**#{first}#{rest}**"
+       "\n\n**#{hdr}**\n\n"
     end
   end
 
   # Final cleanup
   cleaned_text.gsub!(/ +/, " ")
   cleaned_text.gsub!(/ \./, ".")
+  cleaned_text.gsub!(/\s+\n/, "\n")
+  cleaned_text.gsub!(/\n\s+/, "\n")
+  cleaned_text.gsub!(/\n\n\n+/, "\n\n")
   
   cleaned_text.strip
 end
