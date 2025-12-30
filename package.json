@@ -1,0 +1,25 @@
+{
+  "name": "app",
+  "private": true,
+  "scripts": {
+    "build": "bun bun.config.js",
+    "build:css": "bunx @tailwindcss/cli -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify"
+  },
+  "dependencies": {
+    "@hotwired/stimulus": "^3.2.2",
+    "@hotwired/turbo-rails": "^8.0.16",
+    "@rails/actiontext": "^8.0.201",
+    "@tailwindcss/cli": "^4.1.13",
+    "@tailwindcss/typography": "^0.5.16",
+    "apexcharts": "^5.3.5",
+    "easymde": "^2.20.0",
+    "highlight.js": "^11.11.1",
+    "marked": "^16.3.0",
+    "railsui-stimulus": "^1.0.11",
+    "sanitize-html": "^2.17.0",
+    "stimulus-use": "^0.52.3",
+    "tailwindcss": "^4.1.13",
+    "tippy.js": "^6.3.7",
+    "trix": "^2.1.15"
+  }
+}

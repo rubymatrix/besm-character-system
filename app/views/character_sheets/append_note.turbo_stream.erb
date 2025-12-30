@@ -1,0 +1,7 @@
+<%= turbo_stream.update "game-notes-content" do %>
+  <%= @character_sheet.game_notes %>
+<% end %>
+
+<%= turbo_stream.replace "new-note-modal" do %>
+  <%= render "new_note_modal" %>
+<% end %>

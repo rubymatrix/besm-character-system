@@ -1,0 +1,88 @@
+<div class="max-w-7xl mx-auto px-4 md:py-12 py-6">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">Search Results</h1>
+    <p class="text-zinc-600 dark:text-zinc-400">
+      Results for "<span class="font-semibold text-zinc-900 dark:text-zinc-100"><%= @query %></span>"
+    </p>
+  </div>
+
+  <% if [@attributes, @defects, @enhancements, @limiters, @weapon_enhancements, @weapon_limiters].all?(&:empty?) %>
+    <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow p-12 text-center">
+      <div class="inline-flex items-center justify-center p-4 bg-zinc-100 dark:bg-zinc-800 rounded-full mb-4">
+        <svg class="w-8 h-8 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+      </div>
+      <h3 class="text-lg font-medium text-zinc-900 dark:text-zinc-100">No results found</h3>
+      <p class="text-zinc-500 dark:text-zinc-400 mt-1">Try adjusting your search terms.</p>
+    </div>
+  <% else %>
+    <div class="space-y-8">
+      <% if @attributes.any? %>
+        <section>
+          <h2 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
+            Attributes <span class="text-sm font-normal text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full"><%= @attributes.count %></span>
+          </h2>
+          <div class="grid grid-cols-1 gap-6">
+            <%= render @attributes %>
+          </div>
+        </section>
+      <% end %>
+
+      <% if @defects.any? %>
+        <section>
+          <h2 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
+            Defects <span class="text-sm font-normal text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full"><%= @defects.count %></span>
+          </h2>
+          <div class="grid grid-cols-1 gap-6">
+            <%= render @defects %>
+          </div>
+        </section>
+      <% end %>
+
+      <% if @enhancements.any? %>
+        <section>
+          <h2 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
+            Attribute Enhancements <span class="text-sm font-normal text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full"><%= @enhancements.count %></span>
+          </h2>
+          <div class="grid grid-cols-1 gap-6">
+            <%= render @enhancements %>
+          </div>
+        </section>
+      <% end %>
+
+      <% if @limiters.any? %>
+        <section>
+          <h2 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
+            Attribute Limiters <span class="text-sm font-normal text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full"><%= @limiters.count %></span>
+          </h2>
+          <div class="grid grid-cols-1 gap-6">
+            <%= render @limiters %>
+          </div>
+        </section>
+      <% end %>
+
+      <% if @weapon_enhancements.any? %>
+        <section>
+          <h2 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
+            Weapon Enhancements <span class="text-sm font-normal text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full"><%= @weapon_enhancements.count %></span>
+          </h2>
+          <div class="grid grid-cols-1 gap-6">
+            <%= render @weapon_enhancements %>
+          </div>
+        </section>
+      <% end %>
+
+      <% if @weapon_limiters.any? %>
+        <section>
+          <h2 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
+            Weapon Limiters <span class="text-sm font-normal text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full"><%= @weapon_limiters.count %></span>
+          </h2>
+          <div class="grid grid-cols-1 gap-6">
+            <%= render @weapon_limiters %>
+          </div>
+        </section>
+      <% end %>
+    </div>
+  <% end %>
+</div>

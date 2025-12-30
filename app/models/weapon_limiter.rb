@@ -1,0 +1,2 @@
+class WeaponLimiter < ApplicationRecord
+end

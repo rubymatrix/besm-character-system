@@ -1,0 +1,2 @@
+class WeaponEnhancement < ApplicationRecord
+end

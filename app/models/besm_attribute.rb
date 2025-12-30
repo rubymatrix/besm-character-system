@@ -1,0 +1,2 @@
+class BesmAttribute < ApplicationRecord
+end

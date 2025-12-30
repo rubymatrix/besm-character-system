@@ -1,0 +1,30 @@
+<!-- app/views/character_sheets/_equipment_fields.html.erb -->
+<% f = local_assigns.fetch(:f) %>
+<% cs = local_assigns.fetch(:cs) %>
+
+<div class="bg-white dark:bg-zinc-900 rounded-2xl shadow p-5"
+     data-controller="nested-form"
+     data-nested-form-wrapper-selector-value="[data-equipment-row]">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">Equipment & More</h2>
+    <button type="button"
+            class="rounded-xl px-3 py-1.5 text-xs font-medium bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700"
+            data-action="nested-form#add"
+            data-nested-form-template-param="equipment">
+      + Add Entry
+    </button>
+  </div>
+
+  <div class="space-y-3" data-nested-form-target="container">
+    <%= f.fields_for :equipment_entries do |ef| %>
+      <%= render partial: "equipment_row", locals: { ef: ef } %>
+    <% end %>
+  </div>
+
+  <template data-nested-form-target="template" data-template-name="equipment">
+    <% new_eq = EquipmentEntry.new %>
+    <%= f.fields_for :equipment_entries, new_eq, child_index: "NEW_RECORD" do |ef| %>
+      <%= render partial: "equipment_row", locals: { ef: ef } %>
+    <% end %>
+  </template>
+</div>

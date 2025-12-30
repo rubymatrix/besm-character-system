@@ -1,0 +1,28 @@
+<%# expects local :af (a form builder) %>
+<div data-attribute-row
+     class="grid md:grid-cols-12 gap-3 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3">
+  <div class="md:col-span-6">
+    <label class="block text-xs font-medium text-zinc-500 mb-1">Name</label>
+    <%= af.text_field :name, class: "form-input w-full" %>
+  </div>
+  <div class="md:col-span-2">
+    <label class="block text-xs font-medium text-zinc-500 mb-1">Level</label>
+    <%= af.number_field :level, min: 0, class: "form-input w-full" %>
+  </div>
+  <div class="md:col-span-2">
+    <label class="block text-xs font-medium text-zinc-500 mb-1">Points</label>
+    <%= af.number_field :points, min: 0, class: "form-input w-full" %>
+  </div>
+  <div class="md:col-span-10">
+    <label class="block text-xs font-medium text-zinc-500 mb-1">Notes</label>
+    <%= af.text_field :notes, class: "form-input w-full" %>
+  </div>
+  <div class="md:col-span-2 flex items-end justify-end">
+    <%= af.hidden_field :_destroy, value: false, data: { "nested-form-target": "destroyField" } %>
+    <button type="button"
+            class="rounded-xl px-3 py-2 text-xs font-medium bg-red-600 text-white hover:bg-red-700"
+            data-action="nested-form#remove">
+      Remove
+    </button>
+  </div>
+</div>

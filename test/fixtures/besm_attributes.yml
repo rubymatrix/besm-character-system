@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  attribute_cost: MyString
+  relevant_stat: MyString
+  description: MyText
+  level_effects: 
+
+two:
+  name: MyString
+  attribute_cost: MyString
+  relevant_stat: MyString
+  description: MyText
+  level_effects: 

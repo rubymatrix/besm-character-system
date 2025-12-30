@@ -1,0 +1,82 @@
+<!-- app/views/character_sheets/_card.html.erb -->
+<% cs = local_assigns.fetch(:character_sheet) %>
+
+<div class="bg-white dark:bg-zinc-900 rounded-2xl shadow border border-zinc-100 dark:border-zinc-800 hover:shadow-md transition-shadow">
+  <!-- Header -->
+  <div class="p-4 border-b border-zinc-100 dark:border-zinc-800">
+    <div class="flex items-start justify-between gap-3">
+      <div>
+        <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 leading-tight">
+          <%= link_to cs.character_name, character_sheet_path(cs), class: "hover:underline" %>
+        </h3>
+        <p class="text-xs text-zinc-500">
+          Player: <span class="font-medium"><%= cs.player_name %></span>
+        </p>
+      </div>
+      <div class="shrink-0">
+        <span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100">
+          <span class="opacity-60 mr-1">CP</span><%= cs.character_points %>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="p-4 space-y-3">
+    <!-- Tags -->
+    <% tags = [cs.race, cs.occupation].compact_blank %>
+    <% if tags.any? %>
+      <div class="flex flex-wrap gap-1.5">
+        <% tags.each do |t| %>
+          <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300"><%= t %></span>
+        <% end %>
+      </div>
+    <% end %>
+
+    <!-- Stats row -->
+    <div class="grid grid-cols-3 gap-2">
+      <%= render "stat_chip", label: "Body", value: cs.body %>
+      <%= render "stat_chip", label: "Mind", value: cs.mind %>
+      <%= render "stat_chip", label: "Soul", value: cs.soul %>
+    </div>
+
+    <div class="grid grid-cols-2 gap-2">
+      <%= render "stat_chip", label: "ACV", value: cs.acv %>
+      <%= render "stat_chip", label: "DCV", value: cs.dcv %>
+    </div>
+
+    <!-- Health/Energy (optional mini bars) -->
+    <div class="space-y-2">
+      <div>
+        <div class="flex items-center justify-between text-[11px] text-zinc-500">
+          <span>HP</span><span class="font-medium text-zinc-700 dark:text-zinc-300"><%= cs.health_points %></span>
+        </div>
+        <div class="h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+          <div class="h-full rounded-full bg-primary-600" style="width: <%= [[cs.health_points, 100].min, 0].max %>%"></div>
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center justify-between text-[11px] text-zinc-500">
+          <span>EP</span><span class="font-medium text-zinc-700 dark:text-zinc-300"><%= cs.energy_points %></span>
+        </div>
+        <div class="h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+          <div class="h-full rounded-full bg-primary-600" style="width: <%= [[cs.energy_points, 100].min, 0].max %>%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="px-4 py-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+    <span class="text-[11px] text-zinc-500">Updated <%= time_ago_in_words(cs.updated_at) %> ago</span>
+    <div class="flex items-center gap-2">
+      <%= link_to "View", character_sheet_path(cs),
+                  class: "rounded-xl px-2.5 py-1.5 text-xs font-medium bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700" %>
+      <%= link_to "Edit", edit_character_sheet_path(cs),
+                  class: "rounded-xl px-2.5 py-1.5 text-xs font-medium bg-primary-600 text-white hover:bg-primary-700" %>
+      <%= button_to "Delete", character_sheet_path(cs), method: :delete,
+                    data: { confirm: "Delete #{cs.character_name}?" },
+                    class: "rounded-xl px-2.5 py-1.5 text-xs font-medium bg-red-600 text-white hover:bg-red-700" %>
+    </div>
+  </div>
+</div>

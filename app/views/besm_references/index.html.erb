@@ -1,0 +1,39 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="md:flex md:items-center md:justify-between mb-8">
+    <div class="min-w-0 flex-1">
+      <h2 class="text-2xl font-bold leading-7 text-gray-900 dark:text-gray-100 sm:truncate sm:text-3xl sm:tracking-tight">
+        BESM Reference Dashboard
+      </h2>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <% [
+      { name: "Attributes", count: @attributes_count, path: attributes_besm_references_path, desc: "Character attributes and powers" },
+      { name: "Defects", count: @defects_count, path: defects_besm_references_path, desc: "Character drawbacks and weaknesses" },
+      { name: "Attribute Enhancements", count: @enhancements_count, path: enhancements_besm_references_path, desc: "Modifiers to improve attributes" },
+      { name: "Attribute Limiters", count: @limiters_count, path: limiters_besm_references_path, desc: "Modifiers to limit attributes" },
+      { name: "Weapon Enhancements", count: @weapon_enhancements_count, path: weapon_enhancements_besm_references_path, desc: "Enhancements specific to weapons" },
+      { name: "Weapon Limiters", count: @weapon_limiters_count, path: weapon_limiters_besm_references_path, desc: "Limiters specific to weapons" }
+    ].each do |resource| %>
+      <%= link_to resource[:path], class: "block group" do %>
+        <div class="bg-white dark:bg-zinc-900 overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow duration-200 border border-gray-200 dark:border-zinc-700">
+          <div class="px-4 py-5 sm:p-6">
+            <dt class="text-base font-normal text-gray-900 dark:text-gray-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+              <%= resource[:name] %>
+            </dt>
+            <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
+              <div class="flex items-baseline text-2xl font-semibold text-indigo-600 dark:text-indigo-400">
+                <%= resource[:count] %>
+                <span class="ml-2 text-sm font-medium text-gray-500 dark:text-gray-400">entries</span>
+              </div>
+            </dd>
+            <div class="mt-4 text-sm text-gray-500 dark:text-gray-400">
+              <%= resource[:desc] %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

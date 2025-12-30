@@ -1,0 +1,21 @@
+--- !ruby/object:Railsui::Configuration
+application_name: Big Eyes, Small Mouth
+support_email: joshtyree.90@gmail.com
+theme: corgie
+pages:
+- home
+- pricing
+- features
+- blog
+- blog_show
+- blog_category
+- about
+- terms
+- privacy_policy
+- signup
+- signin
+- help
+- chat_new
+- chat_show
+body_classes: h-screen antialiased text-neutral-800 dark:text-neutral-50 dark:bg-neutral-900
+  bg-neutral-50 font-tiktok

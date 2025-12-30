@@ -1,0 +1,2 @@
+class AttributeEnhancement < ApplicationRecord
+end

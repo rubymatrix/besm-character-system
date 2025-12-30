@@ -1,0 +1,2 @@
+class AttributeLimiter < ApplicationRecord
+end

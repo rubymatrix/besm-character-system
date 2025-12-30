@@ -1,0 +1,23 @@
+<div class="bg-white dark:bg-zinc-900 shadow overflow-hidden sm:rounded-lg border border-gray-200 dark:border-zinc-700">
+  <div class="px-4 py-5 sm:px-6 bg-gray-50 dark:bg-zinc-800">
+    <div class="flex justify-between items-center">
+      <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100"><%= attribute_limiter.name %></h3>
+      <div class="ml-4 flex-shrink-0">
+        <%= link_to "Edit", edit_attribute_limiter_path(attribute_limiter), class: "font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300" %>
+      </div>
+    </div>
+  </div>
+  <div class="border-t border-gray-200 dark:border-zinc-700 px-4 py-5 sm:px-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="<%= (attribute_limiter.assignment_effects.present?) ? 'md:col-span-2' : 'md:col-span-3' %>">
+        <%= render_besm_description(attribute_limiter.description) %>
+      </div>
+      
+      <% if attribute_limiter.assignment_effects.present? %>
+        <div>
+          <%= effects_table(attribute_limiter.assignment_effects) %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

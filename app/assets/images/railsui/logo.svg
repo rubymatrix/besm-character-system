@@ -1,0 +1,10 @@
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g clip-path="url(#corgie_logo_clip_path)">
+    <path d="M60 54C60 57.3137 57.3137 60 54 60H6C2.68629 60 0 57.3137 0 54V6C0 2.68629 2.68629 0 6 0H54C57.3137 0 60 2.68629 60 6V54ZM31.0547 9.60938V29.0625H50.5078V12.5391C50.5078 10.9211 49.1961 9.60938 47.5781 9.60938H31.0547Z" fill="currentColor"/>
+  </g>
+  <defs>
+    <clipPath id="corgie_logo_clip_path">
+      <rect width="60" height="60" fill="white" />
+    </clipPath>
+  </defs>
+</svg>

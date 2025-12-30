@@ -1,0 +1,53 @@
+<!-- app/views/character_sheets/_table.html.erb -->
+<% character_sheets ||= [] %>
+<div class="bg-white dark:bg-zinc-900 rounded-2xl shadow overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="min-w-full text-sm">
+      <thead>
+      <tr class="text-left text-zinc-500 border-b border-zinc-100 dark:border-zinc-800">
+        <th class="px-5 py-3">Character</th>
+        <th class="px-5 py-3">Player</th>
+        <th class="px-5 py-3">CP</th>
+        <th class="px-5 py-3">B/M/S</th>
+        <th class="px-5 py-3">ACV / DCV</th>
+        <th class="px-5 py-3 hidden md:table-cell">Updated</th>
+        <th class="px-5 py-3 text-right">Actions</th>
+      </tr>
+      </thead>
+      <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+      <% character_sheets.each do |cs| %>
+        <tr class="hover:bg-zinc-50/80 dark:hover:bg-zinc-900/40">
+          <td class="px-5 py-3">
+            <div class="font-medium text-zinc-900 dark:text-zinc-100"><%= cs.character_name %></div>
+            <div class="text-xs text-zinc-500">
+              <%= [cs.race, cs.occupation].compact_blank.join(" • ") %>
+            </div>
+          </td>
+          <td class="px-5 py-3"><%= cs.player_name %></td>
+          <td class="px-5 py-3"><%= cs.character_points %></td>
+          <td class="px-5 py-3">
+            B <%= cs.body %> / M <%= cs.mind %> / S <%= cs.soul %>
+          </td>
+          <td class="px-5 py-3">
+            ACV <%= cs.acv %> / DCV <%= cs.dcv %>
+          </td>
+          <td class="px-5 py-3 hidden md:table-cell">
+            <%= time_ago_in_words(cs.updated_at) %> ago
+          </td>
+          <td class="px-5 py-3">
+            <div class="flex items-center justify-end gap-2">
+              <%= link_to "View", character_sheet_path(cs),
+                          class: "rounded-xl px-3 py-1.5 text-xs font-medium bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700" %>
+              <%= link_to "Edit", edit_character_sheet_path(cs),
+                          class: "rounded-xl px-3 py-1.5 text-xs font-medium bg-primary-600 text-white hover:bg-primary-700" %>
+              <%= button_to "Delete", character_sheet_path(cs), method: :delete,
+                            data: { confirm: "Delete #{cs.character_name}?" },
+                            class: "rounded-xl px-3 py-1.5 text-xs font-medium bg-red-600 text-white hover:bg-red-700" %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

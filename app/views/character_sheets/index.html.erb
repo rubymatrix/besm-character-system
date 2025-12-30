@@ -1,0 +1,55 @@
+<%# app/views/character_sheets/show.html.erb %>
+<%# Rails UI + Tailwind (Corgi theme). This blocks out a BESM4-style character sheet show page. %>
+
+<div class="flex h-full overflow-hidden" data-controller="sidebar">
+  <%= render "shared/sidebar" %>
+  <div class="flex flex-col flex-1 min-w-0 overflow-auto">
+    <% content_for :title, "Character Sheets" %>
+
+    <div class="max-w-7xl mx-auto px-4 md:py-12 py:6">
+      <!-- Header -->
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+        <div>
+          <h1 class="text-3xl md:text-4xl font-semibold font-heading tracking-tight text-zinc-900 dark:text-zinc-100">
+            Character Sheets
+          </h1>
+          <p class="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
+            Browse and manage all characters.
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <%= link_to "New Character", new_character_sheet_path,
+                      class: "inline-flex items-center rounded-2xl px-3 py-2 text-sm font-medium bg-primary-600 text-white hover:bg-primary-700 shadow" %>
+        </div>
+      </div>
+
+      <!-- Filters / Actions -->
+
+
+      <% if @character_sheets.any? %>
+        <% if @view == "table" %>
+          <%= render "table", character_sheets: @character_sheets %>
+        <% else %>
+          <!-- Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            <% @character_sheets.each do |cs| %>
+              <%= render "card", character_sheet: cs %>
+            <% end %>
+          </div>
+        <% end %>
+      <% else %>
+        <!-- Empty state -->
+        <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow p-8 text-center">
+          <p class="text-zinc-600 dark:text-zinc-400 mb-4">No characters found<%= " for “#{@q}”" if @q.present? %>.</p>
+          <div class="flex items-center justify-center gap-2">
+            <%= link_to "Clear search", character_sheets_path,
+                        class: "rounded-2xl px-3 py-2 text-sm font-medium bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-300 dark:hover:bg-zinc-700" if @q.present? %>
+            <%= link_to "Create your first character", new_character_sheet_path,
+                        class: "rounded-2xl px-3 py-2 text-sm font-medium bg-primary-600 text-white hover:bg-primary-700" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+  </div>
+</div>

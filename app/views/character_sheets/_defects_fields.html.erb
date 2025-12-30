@@ -1,0 +1,29 @@
+<!-- app/views/character_sheets/_defects_fields.html.erb -->
+<% f = local_assigns.fetch(:f) %>
+<% cs = local_assigns.fetch(:cs) %>
+
+<div class="bg-white dark:bg-zinc-900 rounded-2xl shadow p-5"
+     data-controller="nested-form"
+     data-nested-form-wrapper-selector-value="[data-defect-row]">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">Defects</h2>
+    <button type="button"
+            class="rounded-xl px-3 py-1.5 text-xs font-medium bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700"
+            data-action="nested-form#add"
+            data-nested-form-template-param="defect">
+      + Add Defect
+    </button>
+  </div>
+
+  <div class="space-y-3" data-nested-form-target="container">
+    <%= f.fields_for :character_defects do |df| %>
+      <%= render "defect_row", f: df %>
+    <% end %>
+  </div>
+
+  <template data-nested-form-target="template" data-template-name="defect">
+    <%= f.fields_for :character_defects, CharacterDefect.new, child_index: "NEW_RECORD" do |df| %>
+      <%= render "defect_row", f: df %>
+    <% end %>
+  </template>
+</div>

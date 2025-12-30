@@ -1,0 +1,362 @@
+<%# app/views/character_sheets/show.html.erb %>
+<%# Rails UI + Tailwind (Corgi theme). This blocks out a BESM4-style character sheet show page. %>
+
+<div class="flex h-full overflow-hidden" data-controller="sidebar">
+  <%= render "shared/sidebar" %>
+  <div class="flex flex-col flex-1 min-w-0 overflow-auto" data-controller="cp-modal money-modal equipment-modal notes-modal edit-notes-modal">
+
+    <% content_for :title, (@character_sheet&.character_name || "Astra Kisaragi") %>
+
+    <div class="max-w-7xl mx-auto px-4 md:py-12 py-6">
+      <!-- Breadcrumbs -->
+      <nav class="font-heading text-sm mb-6 text-zinc-700 dark:text-zinc-300">
+        <ul class="flex items-center space-x-3">
+          <li class="after:content-['/'] after:relative after:text-zinc-300 after:left-1 dark:after:text-zinc-500">
+            <%= link_to "Character Sheets", character_sheets_path, class: "text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300" %>
+          </li>
+          <li>
+            <span>Show</span>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Header -->
+      <div class="flex items-start justify-between gap-6 mb-8">
+        <div>
+          <h1 class="text-3xl md:text-4xl font-semibold font-heading tracking-tight text-zinc-900 dark:text-zinc-100">
+            <%= @character_sheet&.character_name || "Astra Kisaragi" %>
+          </h1>
+          <div class="mt-2 text-sm text-zinc-600 dark:text-zinc-400 flex flex-wrap gap-x-4 gap-y-1">
+            <span>Player: <strong class="font-medium text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.player_name || "Josh" %></strong></span>
+            <span>GM: <strong class="font-medium text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.gm_name || "Mira" %></strong></span>
+          </div>
+          <div class="mt-2 flex items-center gap-4 text-sm">
+            <div class="px-3 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+              <span class="text-xs text-zinc-500 uppercase tracking-wide">Base CP</span>
+              <div class="font-semibold text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.character_points || 0 %></div>
+            </div>
+            <div class="px-3 py-1 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+              <span class="text-xs text-green-600 dark:text-green-400 uppercase tracking-wide">Earned CP</span>
+              <div class="font-semibold text-green-700 dark:text-green-300"><%= @character_sheet&.character_point_adjustments&.sum(:points) || 0 %></div>
+            </div>
+            <div class="px-3 py-1 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+              <span class="text-xs text-red-600 dark:text-red-400 uppercase tracking-wide">Spent</span>
+              <div class="font-semibold text-red-700 dark:text-red-300"><%= @character_sheet&.cp_spent || 0 %></div>
+            </div>
+            <div class="px-3 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800">
+              <span class="text-xs text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">Balance</span>
+              <div class="font-semibold text-indigo-700 dark:text-indigo-300"><%= @character_sheet&.cp_balance || 0 %></div>
+            </div>
+            <div class="px-3 py-1 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800">
+              <span class="text-xs text-yellow-600 dark:text-yellow-400 uppercase tracking-wide">Money</span>
+              <div class="font-semibold text-yellow-700 dark:text-yellow-300"><%= @character_sheet&.format_currency || "0c" %></div>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" 
+                  data-action="cp-modal#open" 
+                  class="inline-flex items-center rounded-2xl px-3 py-2 text-sm font-medium bg-green-600 text-white hover:bg-green-700 shadow transition-colors">
+            + Add CP
+          </button>
+          <button type="button" 
+                  data-action="money-modal#open" 
+                  class="inline-flex items-center rounded-2xl px-3 py-2 text-sm font-medium bg-yellow-600 text-white hover:bg-yellow-700 shadow transition-colors">
+            + Money
+          </button>
+          <%= link_to "Edit", (@character_sheet ? edit_character_sheet_path(@character_sheet) : "#"), class: "inline-flex items-center rounded-2xl px-3 py-2 text-sm font-medium bg-primary-600 text-white hover:bg-primary-700 shadow transition-colors" %>
+          <%= link_to "Back", character_sheets_path, class: "inline-flex items-center rounded-2xl px-3 py-2 text-sm font-medium bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-colors" %>
+        </div>
+      </div>
+
+      <!-- Top Identity Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow p-5">
+          <h2 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-3">Identity</h2>
+          <dl class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+            <dt class="text-zinc-500">Race / Species</dt>
+            <dd class="font-medium text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.race || "Luna-Born Human" %></dd>
+            <dt class="text-zinc-500">Class / Occupation</dt>
+            <dd class="font-medium text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.occupation || "Starblade Cadet" %></dd>
+            <dt class="text-zinc-500">Home World / Habitat</dt>
+            <dd class="font-medium text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.habitat || "Neo-Tokyo Orbital" %></dd>
+            <dt class="text-zinc-500">Size / Height / Weight / Gender</dt>
+            <dd class="font-medium text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.size_height_weight_gender || "M • 5'9\" • 72kg" %></dd>
+          </dl>
+        </div>
+
+        <!-- Core Stats -->
+        <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow p-5">
+          <h2 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-3">Core Stats</h2>
+          <div class="grid grid-cols-3 gap-3">
+            <% body = @character_sheet&.body || 8 %>
+            <% mind = @character_sheet&.mind || 7 %>
+            <% soul = @character_sheet&.soul || 6 %>
+            <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3">
+              <div class="text-xs uppercase tracking-wider text-zinc-500">Body</div>
+              <div class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100"><%= body %></div>
+            </div>
+            <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3">
+              <div class="text-xs uppercase tracking-wider text-zinc-500">Mind</div>
+              <div class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100"><%= mind %></div>
+            </div>
+            <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3">
+              <div class="text-xs uppercase tracking-wider text-zinc-500">Soul</div>
+              <div class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100"><%= soul %></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Derived Values -->
+        <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow p-5">
+          <h2 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-3">Derived Values</h2>
+          <% acv = @character_sheet&.acv || 6 %>
+          <% dcv = @character_sheet&.dcv || 5 %>
+          <% hp  = @character_sheet&.health_points || 55 %>
+          <% ep  = @character_sheet&.energy_points || 40 %>
+          <% dmg = @character_sheet&.damage_multiplier || "x2" %>
+          <dl class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+            <dt class="text-zinc-500">Attack Combat Value (ACV)</dt>
+            <dd class="font-medium text-zinc-900 dark:text-zinc-100"><%= acv %></dd>
+            <dt class="text-zinc-500">Defence Combat Value (DCV)</dt>
+            <dd class="font-medium text-zinc-900 dark:text-zinc-100"><%= dcv %></dd>
+            <dt class="text-zinc-500">Health Points</dt>
+            <dd class="font-medium text-zinc-900 dark:text-zinc-100"><%= hp %></dd>
+            <dt class="text-zinc-500">Energy Points</dt>
+            <dd class="font-medium text-zinc-900 dark:text-zinc-100"><%= ep %></dd>
+            <dt class="text-zinc-500">Damage Multiplier</dt>
+            <dd class="font-medium text-zinc-900 dark:text-zinc-100"><%= dmg %></dd>
+          </dl>
+        </div>
+      </div>
+
+      <!-- Attributes & Defects -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Attributes Table -->
+        <div class="lg:col-span-2 bg-white dark:bg-zinc-900 rounded-2xl shadow">
+          <div class="flex items-center justify-between p-5 border-b border-zinc-100 dark:border-zinc-800">
+            <div class="flex items-center gap-2">
+              <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">Attributes</h2>
+              <span class="text-xs font-medium text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full"><%= @character_sheet&.total_attribute_points || 0 %> CP</span>
+            </div>
+            <span class="text-xs text-zinc-500">Level / Points</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+              <thead>
+              <tr class="text-left text-zinc-500 border-b border-zinc-100 dark:border-zinc-800">
+                <th class="px-5 py-3">Attribute</th>
+                <th class="px-5 py-3">Level</th>
+                <th class="px-5 py-3">Points</th>
+              </tr>
+              </thead>
+              <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+              <% attributes = @character_sheet&.attributes_list || [
+                { name: "Combat Technique: Starblade", level: 2, points: 8 },
+                { name: "Heightened Senses", level: 1, points: 2 },
+                { name: "Item of Power: Photon Katana", level: 1, points: 4 }
+              ] %>
+              <% attributes.each do |attr| %>
+                <tr>
+                  <td class="px-5 py-3 font-medium text-zinc-900 dark:text-zinc-100"><%= attr[:name] %></td>
+                  <td class="px-5 py-3"><%= attr[:level] %></td>
+                  <td class="px-5 py-3"><%= attr[:points] %></td>
+                </tr>
+              <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Defects Table -->
+        <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow">
+          <div class="p-5 border-b border-zinc-100 dark:border-zinc-800 flex items-center gap-2">
+            <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">Defects</h2>
+            <span class="text-xs font-medium text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full"><%= @character_sheet&.total_defect_bp || 0 %> BP</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+              <thead>
+              <tr class="text-left text-zinc-500 border-b border-zinc-100 dark:border-zinc-800">
+                <th class="px-5 py-3">Defect</th>
+                <th class="px-5 py-3">Rank</th>
+                <th class="px-5 py-3">BP</th>
+              </tr>
+              </thead>
+              <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+              <% defects = @character_sheet&.defects_list || [
+                { name: "Marked", rank: 1, bp: 1 },
+                { name: "Enemy: Syndicate", rank: 2, bp: 2 }
+              ] %>
+              <% defects.each do |d| %>
+                <tr>
+                  <td class="px-5 py-3 font-medium text-zinc-900 dark:text-zinc-100"><%= d[:name] %></td>
+                  <td class="px-5 py-3"><%= d[:rank] %></td>
+                  <td class="px-5 py-3"><%= d[:bp] %></td>
+                </tr>
+              <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Equipment / Companions / Items / Vehicles / NPCs -->
+      <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow mb-8">
+        <div class="p-5 border-b border-zinc-100 dark:border-zinc-800 flex items-center gap-2">
+          <div class="flex items-center justify-between w-full">
+            <div class="flex items-center gap-2">
+              <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">Armour, Weapons, Companions, Items, Vehicles, NPCs</h2>
+              <span class="text-xs font-medium text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full"><%= @character_sheet&.total_equipment_points || 0 %> CP</span>
+            </div>
+            <button type="button" 
+                    data-action="equipment-modal#open"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors border border-zinc-200 dark:border-zinc-700">
+              <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              Add Item
+            </button>
+          </div>
+        </div>
+        <div class="p-5">
+          <div class="flex flex-wrap gap-3">
+            <% @character_sheet.equipment_entries.each do |e| %>
+              <div class="group relative flex items-center gap-2 text-sm border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-2 bg-zinc-50/50 dark:bg-zinc-800/30">
+                <div class="flex flex-col">
+                  <div class="flex items-center gap-2">
+                    <span class="font-semibold text-zinc-900 dark:text-zinc-100"><%= e.name %></span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-500 uppercase tracking-tight"><%= e.kind.humanize %></span>
+                    <% if e.points.to_i > 0 %>
+                      <span class="text-[10px] font-bold text-red-600 dark:text-red-400"><%= e.points %> CP</span>
+                    <% end %>
+                  </div>
+                  <% if e.summary.present? || e.notes.present? %>
+                    <span class="text-zinc-600 dark:text-zinc-400 text-xs mt-0.5">
+                      <%= e.summary.presence || e.notes %>
+                    </span>
+                  <% end %>
+                </div>
+                <%= button_to character_sheet_equipment_entry_path(@character_sheet, e), 
+                               method: :delete, 
+                               data: { confirm: "Are you sure?" }, 
+                               class: "opacity-0 group-hover:opacity-100 absolute -top-2 -right-2 bg-white dark:bg-zinc-900 text-zinc-400 hover:text-red-600 rounded-full border border-zinc-200 dark:border-zinc-800 p-0.5 transition-all shadow-sm" do %>
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Game Notes -->
+      <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow">
+        <div class="p-5 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+          <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">Game Notes</h2>
+          <div class="flex items-center gap-2">
+            <button type="button" 
+                    data-action="edit-notes-modal#open"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors border border-zinc-200 dark:border-zinc-700">
+              <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              Edit
+            </button>
+            <button type="button" 
+                    data-action="notes-modal#open"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl bg-primary-600 text-white hover:bg-primary-700 transition-colors border border-primary-700">
+              <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              Add Note
+            </button>
+          </div>
+        </div>
+        <div class="p-5">
+          <pre id="game-notes-content" class="whitespace-pre-wrap text-sm leading-relaxed text-zinc-800 dark:text-zinc-200"><%= (@character_sheet&.game_notes.presence) || <<~NOTES.strip %>
+              Episode 1: Rescue on the Orbital Lift — recovered prototype core; Syndicate presence confirmed.
+              Episode 2: Duel under Neon Rain — discovered Starblade resonance, training with Master Ryou.
+              Hook: Hikari detected anomalous energy signatures beneath Sector-12.
+            NOTES
+          </pre>
+        </div>
+      </div>
+      <!-- CP History -->
+      <% if @character_sheet && @character_sheet.character_point_adjustments.any? %>
+        <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow mt-8">
+          <div class="p-5 border-b border-zinc-100 dark:border-zinc-800">
+            <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">Character Point History</h2>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+              <thead>
+                <tr class="text-left text-zinc-500 border-b border-zinc-100 dark:border-zinc-800">
+                  <th class="px-5 py-3">Date</th>
+                  <th class="px-5 py-3">Reason</th>
+                  <th class="px-5 py-3 text-right">Points</th>
+                  <th class="px-5 py-3"></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+                <% @character_sheet.character_point_adjustments.order(created_at: :desc).each do |adj| %>
+                  <tr>
+                    <td class="px-5 py-3 text-zinc-600 dark:text-zinc-400"><%= adj.created_at.strftime("%b %d, %Y") %></td>
+                    <td class="px-5 py-3 font-medium text-zinc-900 dark:text-zinc-100"><%= adj.reason %></td>
+                    <td class="px-5 py-3 text-right font-medium <%= adj.points >= 0 ? "text-green-600" : "text-red-600" %>">
+                      <%= adj.points >= 0 ? "+#{adj.points}" : adj.points %>
+                    </td>
+                    <td class="px-5 py-3 text-right">
+                      <%= button_to "×", character_sheet_character_point_adjustment_path(@character_sheet, adj), method: :delete, data: { confirm: "Are you sure?" }, class: "text-zinc-400 hover:text-red-600 transition-colors" %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <% end %>
+      <!-- Money History -->
+      <% if @character_sheet && @character_sheet.money_adjustments.any? %>
+        <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow mt-8">
+          <div class="p-5 border-b border-zinc-100 dark:border-zinc-800">
+            <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">Money Transaction History</h2>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+              <thead>
+                <tr class="text-left text-zinc-500 border-b border-zinc-100 dark:border-zinc-800">
+                  <th class="px-5 py-3">Date</th>
+                  <th class="px-5 py-3">Reason</th>
+                  <th class="px-5 py-3 text-right">Amount</th>
+                  <th class="px-5 py-3"></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+                <% @character_sheet.money_adjustments.order(created_at: :desc).each do |adj| %>
+                  <tr>
+                    <td class="px-5 py-3 text-zinc-600 dark:text-zinc-400"><%= adj.created_at.strftime("%b %d, %Y") %></td>
+                    <td class="px-5 py-3 font-medium text-zinc-900 dark:text-zinc-100"><%= adj.reason %></td>
+                    <td class="px-5 py-3 text-right font-medium <%= adj.amount >= 0 ? "text-green-600" : "text-red-600" %>">
+                      <%= @character_sheet.format_currency(adj.amount) %>
+                    </td>
+                    <td class="px-5 py-3 text-right">
+                      <%= button_to "×", character_sheet_money_adjustment_path(@character_sheet, adj), method: :delete, data: { confirm: "Are you sure?" }, class: "text-zinc-400 hover:text-red-600 transition-colors" %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <%= render "new_cp_modal" if @character_sheet %>
+    <%= render "new_money_modal" if @character_sheet %>
+    <%= render "new_equipment_modal" if @character_sheet %>
+    <%= render "new_note_modal" if @character_sheet %>
+    <%= render "edit_notes_modal" if @character_sheet %>
+  </div>
+</div>

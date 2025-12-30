@@ -1,0 +1,27 @@
+<% ef = local_assigns.fetch(:ef) %>
+<div data-equipment-row class="grid md:grid-cols-12 gap-3 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3">
+  <div class="md:col-span-6">
+    <label class="block text-xs font-medium text-zinc-500 mb-1">Item Name</label>
+    <%= ef.text_field :name, class: "form-input w-full" %>
+  </div>
+  <div class="md:col-span-2">
+    <label class="block text-xs font-medium text-zinc-500 mb-1">Cost / Summary</label>
+    <%= ef.text_field :summary, class: "form-input w-full" %>
+  </div>
+  <div class="md:col-span-2">
+    <label class="block text-xs font-medium text-zinc-500 mb-1">CP Cost</label>
+    <%= ef.number_field :points, value: ef.object.points || 0, class: "form-input w-full" %>
+  </div>
+  <div class="md:col-span-8">
+    <label class="block text-xs font-medium text-zinc-500 mb-1">Notes</label>
+    <%= ef.text_field :notes, class: "form-input w-full" %>
+  </div>
+  <div class="md:col-span-2 flex items-end justify-end">
+    <%= ef.hidden_field :_destroy, value: false, data: { "nested-form-target": "destroyField" } %>
+    <button type="button"
+            class="rounded-xl px-3 py-2 text-xs font-medium bg-red-600 text-white hover:bg-red-700"
+            data-action="nested-form#remove">
+      Remove
+    </button>
+  </div>
+</div>

@@ -1,0 +1,2 @@
+class BesmDefect < ApplicationRecord
+end

@@ -1,0 +1,120 @@
+<!-- app/views/character_sheets/_form.html.erb -->
+<% cs = local_assigns.fetch(:character_sheet) %>
+
+<%= form_with model: cs, class: "space-y-6" do |f| %>
+  <%= render "shared/errors", object: cs %>
+  <!-- Header -->
+  <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow p-5">
+    <div class="grid md:grid-cols-3 gap-4">
+      <div class="md:col-span-2">
+        <label class="block text-xs font-medium text-zinc-500 mb-1">Character Name</label>
+        <%= f.text_field :character_name, class: "form-input w-full" %>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-zinc-500 mb-1">Character Points</label>
+        <%= f.number_field :character_points, min: 0, class: "form-input w-full" %>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-zinc-500 mb-1">Player Name</label>
+        <%= f.text_field :player_name, class: "form-input w-full" %>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-zinc-500 mb-1">Starting Money (Copper Total)</label>
+        <%= f.number_field :money, min: 0, class: "form-input w-full" %>
+        <p class="mt-1 text-[10px] text-zinc-400">100c = 1s, 100s = 1g</p>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-zinc-500 mb-1">GM Name</label>
+        <%= f.text_field :gm_name, class: "form-input w-full" %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Identity -->
+  <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow p-5">
+    <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-4">Identity</h2>
+    <div class="grid md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-xs font-medium text-zinc-500 mb-1">Race / Species</label>
+        <%= f.text_field :race, class: "form-input w-full" %>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-zinc-500 mb-1">Class / Occupation</label>
+        <%= f.text_field :occupation, class: "form-input w-full" %>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-zinc-500 mb-1">Home World / Habitat</label>
+        <%= f.text_field :habitat, class: "form-input w-full" %>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-zinc-500 mb-1">Size / Height / Weight / Gender</label>
+        <%= f.text_field :size_height_weight_gender, class: "form-input w-full" %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Core & Derived -->
+  <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow p-5">
+    <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-4">Stats</h2>
+    <div class="grid md:grid-cols-3 gap-4 mb-4">
+      <div>
+        <label class="block text-xs font-medium text-zinc-500 mb-1">Body</label>
+        <%= f.number_field :body, min: 0, class: "form-input w-full" %>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-zinc-500 mb-1">Mind</label>
+        <%= f.number_field :mind, min: 0, class: "form-input w-full" %>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-zinc-500 mb-1">Soul</label>
+        <%= f.number_field :soul, min: 0, class: "form-input w-full" %>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-5 gap-4">
+      <div>
+        <label class="block text-xs font-medium text-zinc-500 mb-1">ACV</label>
+        <%= f.number_field :acv, min: 0, class: "form-input w-full" %>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-zinc-500 mb-1">DCV</label>
+        <%= f.number_field :dcv, min: 0, class: "form-input w-full" %>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-zinc-500 mb-1">HP</label>
+        <%= f.number_field :health_points, min: 0, class: "form-input w-full" %>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-zinc-500 mb-1">EP</label>
+        <%= f.number_field :energy_points, min: 0, class: "form-input w-full" %>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-zinc-500 mb-1">Damage Multiplier</label>
+        <%= f.text_field :damage_multiplier, class: "form-input w-full", placeholder: "x2" %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Attributes -->
+  <%= render "attributes_fields", f: f, cs: cs %>
+
+  <!-- Defects -->
+  <%= render "defects_fields", f: f, cs: cs %>
+
+  <!-- Equipment -->
+  <%= render "equipment_fields", f: f, cs: cs %>
+
+  <!-- Notes -->
+  <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow p-5">
+    <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-4">Game Notes</h2>
+    <%= f.text_area :game_notes, rows: 6, class: "form-textarea w-full" %>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex items-center justify-end gap-2">
+    <%= link_to "Cancel", (cs.persisted? ? character_sheet_path(cs) : character_sheets_path),
+                class: "rounded-2xl px-3 py-2 text-sm font-medium bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-300 dark:hover:bg-zinc-700" %>
+    <%= f.submit (cs.persisted? ? "Update Character" : "Create Character"),
+                 class: "rounded-2xl px-3 py-2 text-sm font-medium bg-primary-600 text-white hover:bg-primary-700" %>
+  </div>
+<% end %>

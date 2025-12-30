@@ -1,0 +1,14 @@
+<!-- Header -->
+<div class="flex items-center justify-between p-4">
+  <div class="relative flex items-center gap-2 sidebar-collapsed:gap-0 sidebar-collapsed:justify-center sidebar-collapsed:flex">
+
+    <!-- Logo with hover toggle overlay -->
+    <div class="relative group" data-sidebar-target="logoContainer">
+      <%= link_to root_path, class: "block shrink-0" do %>
+        <%= image_tag "icon.png", width: "32", class: "size-6 shrink-0 fill-current dark:fill-neutral-100 transition-opacity duration-200 invert" %>
+      <% end %>
+    </div>
+
+    <h1 class="text-sm font-bold">Big Eyes, Small Mouth 4E</h1>
+  </div>
+</div>

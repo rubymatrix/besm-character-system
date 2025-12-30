@@ -1,0 +1,54 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-6 flex items-center justify-between">
+    <div>
+      <nav class="sm:hidden" aria-label="Back">
+        <%= link_to "Back", besm_references_path, class: "flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 dark:hover:text-gray-300" %>
+      </nav>
+      <nav class="hidden sm:flex mb-2" aria-label="Breadcrumb">
+        <ol role="list" class="flex items-center space-x-4">
+          <li>
+            <div class="flex">
+              <%= link_to "Dashboard", besm_references_path, class: "text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" %>
+            </div>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <svg class="h-5 w-5 flex-shrink-0 text-gray-300 dark:text-gray-600" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+              </svg>
+              <a href="#" class="ml-4 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" aria-current="page">Weapon Enhancements</a>
+            </div>
+          </li>
+        </ol>
+      </nav>
+      <h2 class="text-2xl font-bold leading-7 text-gray-900 dark:text-gray-100 sm:truncate sm:text-3xl sm:tracking-tight">Weapon Enhancements</h2>
+    </div>
+  </div>
+
+  <div class="space-y-6">
+    <% @weapon_enhancements.each do |we| %>
+      <div class="bg-white dark:bg-zinc-900 shadow overflow-hidden sm:rounded-lg border border-gray-200 dark:border-zinc-700">
+        <div class="px-4 py-5 sm:px-6 bg-gray-50 dark:bg-zinc-800">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100"><%= we.name %></h3>
+              <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                <span class="font-medium">Ranks:</span> <%= we.ranks %>
+              </p>
+            </div>
+            <div class="ml-4 flex-shrink-0">
+              <%= link_to "Edit", edit_weapon_enhancement_path(we), class: "font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300" %>
+            </div>
+          </div>
+        </div>
+        <div class="border-t border-gray-200 dark:border-zinc-700 px-4 py-5 sm:px-6">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="md:col-span-3">
+              <%= render_besm_description(we.description) %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
