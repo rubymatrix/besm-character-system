@@ -1,0 +1,3 @@
+[submodule "besm-attribute-viewer"]
+	path = besm-attribute-viewer
+	url = https://github.com/rubymatrix/besm-attribute-viewer.git
