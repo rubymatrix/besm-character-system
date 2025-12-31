@@ -21,7 +21,7 @@ astra = CharacterSheet.create!(
   body: 4, mind: 4, soul: 4,
   acv: 6, dcv: 5, health_points: 55, energy_points: 40, damage_multiplier: "x2",
   money: 0,
-  game_notes: "Rescue on the Orbital Lift; Syndicate presence confirmed."
+  game_notes: ""
 )
 
 astra.character_attributes.create!([

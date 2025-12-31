@@ -275,12 +275,7 @@
           </div>
         </div>
         <div class="p-5">
-          <pre id="game-notes-content" class="whitespace-pre-wrap text-sm leading-relaxed text-zinc-800 dark:text-zinc-200"><%= (@character_sheet&.game_notes.presence) || <<~NOTES.strip %>
-              Episode 1: Rescue on the Orbital Lift — recovered prototype core; Syndicate presence confirmed.
-              Episode 2: Duel under Neon Rain — discovered Starblade resonance, training with Master Ryou.
-              Hook: Hikari detected anomalous energy signatures beneath Sector-12.
-            NOTES
-          </pre>
+          <pre id="game-notes-content" class="whitespace-pre-wrap text-sm leading-relaxed text-zinc-800 dark:text-zinc-200"><%= @character_sheet&.game_notes %></pre>
         </div>
       </div>
       <!-- CP History -->
