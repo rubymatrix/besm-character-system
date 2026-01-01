@@ -4,4 +4,9 @@ class CharacterAttribute < ApplicationRecord
 
   validates :name, presence: true
   validates :level, :points, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+
+  def cost_points
+    return points if points.to_i.positive?
+    level.to_i
+  end
 end

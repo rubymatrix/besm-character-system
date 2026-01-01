@@ -12,7 +12,8 @@ class CharacterSheet < ApplicationRecord
 
   validates :character_name, :player_name, presence: true
   validates :character_points, :body, :mind, :soul,
-            :acv, :dcv, :health_points, :energy_points,
+            :melee_acv, :ranged_acv, :melee_dcv, :ranged_dcv,
+            :health_points, :energy_points,
             numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :money, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
 
@@ -21,14 +22,16 @@ class CharacterSheet < ApplicationRecord
   # before_validation :compute_defaults, on: :create
   #
   # def compute_defaults
-  #   self.acv ||= (body + mind) / 2
-  #   self.dcv ||= (body + soul) / 2
+  #   self.melee_acv ||= (body + mind) / 2
+  #   self.ranged_acv ||= (body + mind) / 2
+  #   self.melee_dcv ||= (body + soul) / 2
+  #   self.ranged_dcv ||= (body + soul) / 2
   #   self.health_points  ||= body * 10
   #   self.energy_points  ||= mind * 5 + soul * 5
   # end
   # --- Back-compat helpers for the current view ---
   def attributes_list
-    character_attributes.map { |a| { name: a.name, level: a.level, points: a.points } }
+    character_attributes.map { |a| { name: a.name, level: a.level, points: a.cost_points } }
   end
 
   def defects_list
@@ -46,7 +49,7 @@ class CharacterSheet < ApplicationRecord
   end
 
   def total_attribute_points
-    character_attributes.sum(:points)
+    character_attributes.sum { |a| a.cost_points }
   end
 
   def total_defect_bp

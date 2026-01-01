@@ -19,7 +19,7 @@
         </div>
         <div class="flex items-center gap-2">
           <%= link_to "New Character", new_character_sheet_path,
-                      class: "inline-flex items-center rounded-2xl px-3 py-2 text-sm font-medium bg-primary-600 text-white hover:bg-primary-700 shadow" %>
+                      class: "inline-flex items-center rounded-2xl px-3 py-2 text-sm font-medium bg-primary-600 text-zinc-900 dark:text-white hover:bg-primary-700 shadow" %>
         </div>
       </div>
 
@@ -45,7 +45,7 @@
             <%= link_to "Clear search", character_sheets_path,
                         class: "rounded-2xl px-3 py-2 text-sm font-medium bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-300 dark:hover:bg-zinc-700" if @q.present? %>
             <%= link_to "Create your first character", new_character_sheet_path,
-                        class: "rounded-2xl px-3 py-2 text-sm font-medium bg-primary-600 text-white hover:bg-primary-700" %>
+                        class: "rounded-2xl px-3 py-2 text-sm font-medium bg-primary-600 text-zinc-900 dark:text-white hover:bg-primary-700" %>
           </div>
         </div>
       <% end %>

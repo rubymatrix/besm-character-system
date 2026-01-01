@@ -56,16 +56,78 @@
         <div class="flex items-center gap-2">
           <button type="button" 
                   data-action="cp-modal#open" 
-                  class="inline-flex items-center rounded-2xl px-3 py-2 text-sm font-medium bg-green-600 text-white hover:bg-green-700 shadow transition-colors">
+                  class="inline-flex items-center rounded-2xl px-3 py-2 text-sm font-medium bg-green-600 text-zinc-900 dark:text-white hover:bg-green-700 shadow transition-colors">
             + Add CP
           </button>
           <button type="button" 
                   data-action="money-modal#open" 
-                  class="inline-flex items-center rounded-2xl px-3 py-2 text-sm font-medium bg-yellow-600 text-white hover:bg-yellow-700 shadow transition-colors">
+                  class="inline-flex items-center rounded-2xl px-3 py-2 text-sm font-medium bg-yellow-600 text-zinc-900 dark:text-white hover:bg-yellow-700 shadow transition-colors">
             + Money
           </button>
-          <%= link_to "Edit", (@character_sheet ? edit_character_sheet_path(@character_sheet) : "#"), class: "inline-flex items-center rounded-2xl px-3 py-2 text-sm font-medium bg-primary-600 text-white hover:bg-primary-700 shadow transition-colors" %>
+          <%= link_to "Edit", (@character_sheet ? edit_character_sheet_path(@character_sheet) : "#"), class: "inline-flex items-center rounded-2xl px-3 py-2 text-sm font-medium bg-primary-600 text-zinc-900 dark:text-white hover:bg-primary-700 shadow transition-colors" %>
           <%= link_to "Back", character_sheets_path, class: "inline-flex items-center rounded-2xl px-3 py-2 text-sm font-medium bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-colors" %>
+        </div>
+      </div>
+
+      <!-- CP Balance Breakdown -->
+      <% base_cp = @character_sheet&.character_points || 0 %>
+      <% earned_cp = @character_sheet&.character_point_adjustments&.sum(:points) || 0 %>
+      <% body = @character_sheet&.body || 8 %>
+      <% mind = @character_sheet&.mind || 7 %>
+      <% soul = @character_sheet&.soul || 6 %>
+      <% attributes_cp = @character_sheet&.total_attribute_points || 0 %>
+      <% defect_bp = @character_sheet&.total_defect_bp || 0 %>
+      <% equipment_cp = @character_sheet&.total_equipment_points || 0 %>
+      <% core_stats_cp = (body * 2 + mind * 2 + soul * 2) %>
+      <% budget_cp = @character_sheet&.cp_budget || (base_cp + earned_cp) %>
+      <% spent_cp = @character_sheet&.cp_spent || (attributes_cp - defect_bp + equipment_cp + core_stats_cp) %>
+      <% balance_cp = @character_sheet&.cp_balance || (budget_cp - spent_cp) %>
+      <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow p-5 mb-8">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">CP Balance Breakdown</h2>
+            <p class="text-xs text-zinc-500">Step-by-step calculation of your current CP balance.</p>
+          </div>
+          <span class="text-xs font-medium text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded-full">
+            Balance: <%= balance_cp %> CP
+          </span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div class="border border-zinc-200 dark:border-zinc-800 rounded-xl p-4">
+            <div class="text-xs uppercase tracking-wide text-zinc-500">Step 1</div>
+            <div class="font-medium text-zinc-900 dark:text-zinc-100 mt-1">Budget CP</div>
+            <div class="text-zinc-600 dark:text-zinc-400 mt-2">
+              <div>Base CP: <span class="font-medium text-zinc-900 dark:text-zinc-100"><%= base_cp %></span></div>
+              <div>Earned CP: <span class="font-medium text-zinc-900 dark:text-zinc-100"><%= earned_cp %></span></div>
+              <div class="mt-2 border-t border-zinc-200 dark:border-zinc-800 pt-2">
+                Total Budget: <span class="font-semibold text-zinc-900 dark:text-zinc-100"><%= budget_cp %></span>
+              </div>
+            </div>
+          </div>
+          <div class="border border-zinc-200 dark:border-zinc-800 rounded-xl p-4">
+            <div class="text-xs uppercase tracking-wide text-zinc-500">Step 2</div>
+            <div class="font-medium text-zinc-900 dark:text-zinc-100 mt-1">Spent CP</div>
+            <div class="text-zinc-600 dark:text-zinc-400 mt-2">
+              <div>Attributes: <span class="font-medium text-zinc-900 dark:text-zinc-100"><%= attributes_cp %></span></div>
+              <div>Defects: <span class="font-medium text-zinc-900 dark:text-zinc-100">-<%= defect_bp %></span></div>
+              <div>Equipment: <span class="font-medium text-zinc-900 dark:text-zinc-100"><%= equipment_cp %></span></div>
+              <div>Core Stats: <span class="font-medium text-zinc-900 dark:text-zinc-100"><%= core_stats_cp %></span></div>
+              <div class="mt-2 border-t border-zinc-200 dark:border-zinc-800 pt-2">
+                Total Spent: <span class="font-semibold text-zinc-900 dark:text-zinc-100"><%= spent_cp %></span>
+              </div>
+            </div>
+          </div>
+          <div class="border border-zinc-200 dark:border-zinc-800 rounded-xl p-4">
+            <div class="text-xs uppercase tracking-wide text-zinc-500">Step 3</div>
+            <div class="font-medium text-zinc-900 dark:text-zinc-100 mt-1">Balance CP</div>
+            <div class="text-zinc-600 dark:text-zinc-400 mt-2">
+              <div>Budget: <span class="font-medium text-zinc-900 dark:text-zinc-100"><%= budget_cp %></span></div>
+              <div>Spent: <span class="font-medium text-zinc-900 dark:text-zinc-100">-<%= spent_cp %></span></div>
+              <div class="mt-2 border-t border-zinc-200 dark:border-zinc-800 pt-2">
+                Balance: <span class="font-semibold text-zinc-900 dark:text-zinc-100"><%= balance_cp %></span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -89,9 +151,6 @@
         <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow p-5">
           <h2 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-3">Core Stats</h2>
           <div class="grid grid-cols-3 gap-3">
-            <% body = @character_sheet&.body || 8 %>
-            <% mind = @character_sheet&.mind || 7 %>
-            <% soul = @character_sheet&.soul || 6 %>
             <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3">
               <div class="text-xs uppercase tracking-wider text-zinc-500">Body</div>
               <div class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100"><%= body %></div>
@@ -110,16 +169,22 @@
         <!-- Derived Values -->
         <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow p-5">
           <h2 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-3">Derived Values</h2>
-          <% acv = @character_sheet&.acv || 6 %>
-          <% dcv = @character_sheet&.dcv || 5 %>
+          <% melee_acv = @character_sheet&.melee_acv || 6 %>
+          <% ranged_acv = @character_sheet&.ranged_acv || 6 %>
+          <% melee_dcv = @character_sheet&.melee_dcv || 5 %>
+          <% ranged_dcv = @character_sheet&.ranged_dcv || 5 %>
           <% hp  = @character_sheet&.health_points || 55 %>
           <% ep  = @character_sheet&.energy_points || 40 %>
           <% dmg = @character_sheet&.damage_multiplier || "x2" %>
           <dl class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-            <dt class="text-zinc-500">Attack Combat Value (ACV)</dt>
-            <dd class="font-medium text-zinc-900 dark:text-zinc-100"><%= acv %></dd>
-            <dt class="text-zinc-500">Defence Combat Value (DCV)</dt>
-            <dd class="font-medium text-zinc-900 dark:text-zinc-100"><%= dcv %></dd>
+            <dt class="text-zinc-500">Melee Attack Combat Value (ACV)</dt>
+            <dd class="font-medium text-zinc-900 dark:text-zinc-100"><%= melee_acv %></dd>
+            <dt class="text-zinc-500">Ranged Attack Combat Value (ACV)</dt>
+            <dd class="font-medium text-zinc-900 dark:text-zinc-100"><%= ranged_acv %></dd>
+            <dt class="text-zinc-500">Melee Defence Combat Value (DCV)</dt>
+            <dd class="font-medium text-zinc-900 dark:text-zinc-100"><%= melee_dcv %></dd>
+            <dt class="text-zinc-500">Ranged Defence Combat Value (DCV)</dt>
+            <dd class="font-medium text-zinc-900 dark:text-zinc-100"><%= ranged_dcv %></dd>
             <dt class="text-zinc-500">Health Points</dt>
             <dd class="font-medium text-zinc-900 dark:text-zinc-100"><%= hp %></dd>
             <dt class="text-zinc-500">Energy Points</dt>
@@ -266,7 +331,7 @@
             </button>
             <button type="button" 
                     data-action="notes-modal#open"
-                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl bg-primary-600 text-white hover:bg-primary-700 transition-colors border border-primary-700">
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl bg-primary-600 text-zinc-900 dark:text-white hover:bg-primary-700 transition-colors border border-primary-700">
               <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.5v15m7.5-7.5h-15" />
               </svg>

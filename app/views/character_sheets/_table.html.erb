@@ -9,7 +9,7 @@
         <th class="px-5 py-3">Player</th>
         <th class="px-5 py-3">CP</th>
         <th class="px-5 py-3">B/M/S</th>
-        <th class="px-5 py-3">ACV / DCV</th>
+        <th class="px-5 py-3">Combat Values</th>
         <th class="px-5 py-3 hidden md:table-cell">Updated</th>
         <th class="px-5 py-3 text-right">Actions</th>
       </tr>
@@ -29,7 +29,8 @@
             B <%= cs.body %> / M <%= cs.mind %> / S <%= cs.soul %>
           </td>
           <td class="px-5 py-3">
-            ACV <%= cs.acv %> / DCV <%= cs.dcv %>
+            <div>ACV M <%= cs.melee_acv %> / R <%= cs.ranged_acv %></div>
+            <div>DCV M <%= cs.melee_dcv %> / R <%= cs.ranged_dcv %></div>
           </td>
           <td class="px-5 py-3 hidden md:table-cell">
             <%= time_ago_in_words(cs.updated_at) %> ago
@@ -39,10 +40,10 @@
               <%= link_to "View", character_sheet_path(cs),
                           class: "rounded-xl px-3 py-1.5 text-xs font-medium bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700" %>
               <%= link_to "Edit", edit_character_sheet_path(cs),
-                          class: "rounded-xl px-3 py-1.5 text-xs font-medium bg-primary-600 text-white hover:bg-primary-700" %>
+                          class: "rounded-xl px-3 py-1.5 text-xs font-medium bg-primary-600 text-zinc-900 dark:text-white hover:bg-primary-700" %>
               <%= button_to "Delete", character_sheet_path(cs), method: :delete,
                             data: { confirm: "Delete #{cs.character_name}?" },
-                            class: "rounded-xl px-3 py-1.5 text-xs font-medium bg-red-600 text-white hover:bg-red-700" %>
+                            class: "rounded-xl px-3 py-1.5 text-xs font-medium bg-red-600 text-zinc-900 dark:text-white hover:bg-red-700" %>
             </div>
           </td>
         </tr>

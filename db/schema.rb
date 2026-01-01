@@ -133,8 +133,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_30_222303) do
     t.integer "body", default: 6, null: false
     t.integer "mind", default: 6, null: false
     t.integer "soul", default: 6, null: false
-    t.integer "acv", default: 6, null: false
-    t.integer "dcv", default: 6, null: false
     t.integer "health_points", default: 30, null: false
     t.integer "energy_points", default: 20, null: false
     t.string "damage_multiplier", default: "x2", null: false
@@ -142,6 +140,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_30_222303) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "money"
+    t.integer "melee_acv", default: 6, null: false
+    t.integer "ranged_acv", default: 6, null: false
+    t.integer "melee_dcv", default: 6, null: false
+    t.integer "ranged_dcv", default: 6, null: false
     t.index ["character_name"], name: "index_character_sheets_on_character_name"
     t.index ["player_name"], name: "index_character_sheets_on_player_name"
   end

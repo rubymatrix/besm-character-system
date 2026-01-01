@@ -4,7 +4,7 @@ A comprehensive character sheet management system for the **Big Eyes, Small Mout
 
 ## Features
 
-- **Dynamic Character Sheets**: Track stats (Body, Mind, Soul), derived values (ACV, DCV, Health, Energy), and specialized attributes.
+- **Dynamic Character Sheets**: Track stats (Body, Mind, Soul), derived values (Melee/Ranged ACV & DCV, Health, Energy), and specialized attributes.
 - **Points Management**: Automatically calculate and adjust character points and bonus points (BP) from defects.
 - **Asset Management**: Catalog equipment, weapons, and armor with dedicated entries.
 - **Economic Tracking**: Manage character currency with a transaction history.

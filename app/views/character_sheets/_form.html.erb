@@ -71,14 +71,22 @@
       </div>
     </div>
 
-    <div class="grid md:grid-cols-5 gap-4">
+    <div class="grid md:grid-cols-4 gap-4">
       <div>
-        <label class="block text-xs font-medium text-zinc-500 mb-1">ACV</label>
-        <%= f.number_field :acv, min: 0, class: "form-input w-full" %>
+        <label class="block text-xs font-medium text-zinc-500 mb-1">Melee ACV</label>
+        <%= f.number_field :melee_acv, min: 0, class: "form-input w-full" %>
       </div>
       <div>
-        <label class="block text-xs font-medium text-zinc-500 mb-1">DCV</label>
-        <%= f.number_field :dcv, min: 0, class: "form-input w-full" %>
+        <label class="block text-xs font-medium text-zinc-500 mb-1">Ranged ACV</label>
+        <%= f.number_field :ranged_acv, min: 0, class: "form-input w-full" %>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-zinc-500 mb-1">Melee DCV</label>
+        <%= f.number_field :melee_dcv, min: 0, class: "form-input w-full" %>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-zinc-500 mb-1">Ranged DCV</label>
+        <%= f.number_field :ranged_dcv, min: 0, class: "form-input w-full" %>
       </div>
       <div>
         <label class="block text-xs font-medium text-zinc-500 mb-1">HP</label>
@@ -115,6 +123,6 @@
     <%= link_to "Cancel", (cs.persisted? ? character_sheet_path(cs) : character_sheets_path),
                 class: "rounded-2xl px-3 py-2 text-sm font-medium bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-300 dark:hover:bg-zinc-700" %>
     <%= f.submit (cs.persisted? ? "Update Character" : "Create Character"),
-                 class: "rounded-2xl px-3 py-2 text-sm font-medium bg-primary-600 text-white hover:bg-primary-700" %>
+                 class: "rounded-2xl px-3 py-2 text-sm font-medium bg-primary-600 text-zinc-900 dark:text-white hover:bg-primary-700" %>
   </div>
 <% end %>
