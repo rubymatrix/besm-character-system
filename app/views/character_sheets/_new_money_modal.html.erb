@@ -21,13 +21,13 @@
           <%= form_with model: [@character_sheet, MoneyAdjustment.new], class: "space-y-4" do |f| %>
             <div>
               <%= f.label :amount, "Amount (100c = 1s, 100s = 1g)", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
-              <%= f.number_field :amount, value: 0, class: "mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
+              <%= f.number_field :amount, value: 0, class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
               <p class="mt-1 text-xs text-gray-500">Enter total in copper (e.g., 100 for 1s, 10000 for 1g)</p>
             </div>
             
             <div>
               <%= f.label :reason, "Reason (optional)", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
-              <%= f.text_field :reason, placeholder: "e.g. Mission Reward, Shop Purchase", class: "mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
+              <%= f.text_field :reason, placeholder: "e.g. Mission Reward, Shop Purchase", class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
             </div>
 
             <div class="mt-5 sm:mt-6">

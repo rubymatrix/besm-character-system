@@ -10,6 +10,7 @@ export default class extends Controller {
   open() {
     this.modalTarget.classList.remove("hidden");
     this.isOpen = true;
+    this.refreshMarkdownEditors();
   }
 
   close() {
@@ -22,5 +23,15 @@ export default class extends Controller {
       this.close();
       event.target.reset();
     }
+  }
+
+  refreshMarkdownEditors() {
+    requestAnimationFrame(() => {
+      this.modalTarget.querySelectorAll(".CodeMirror").forEach((editor) => {
+        if (editor.CodeMirror) {
+          editor.CodeMirror.refresh();
+        }
+      });
+    });
   }
 }

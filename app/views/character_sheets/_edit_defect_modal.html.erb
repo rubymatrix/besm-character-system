@@ -1,13 +1,13 @@
-<% attribute = local_assigns.fetch(:attribute) %>
-<div id="edit-attribute-<%= attribute.id %>-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true" data-edit-attribute-modal-target="modal">
+<% defect = local_assigns.fetch(:defect) %>
+<div id="edit-defect-<%= defect.id %>-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true" data-edit-defect-modal-target="modal">
   <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" aria-hidden="true" data-action="click->edit-attribute-modal#close"></div>
+    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" aria-hidden="true" data-action="click->edit-defect-modal#close"></div>
 
     <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
     <div class="relative z-10 inline-block align-bottom bg-white dark:bg-zinc-900 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6 border border-gray-200 dark:border-zinc-700">
       <div class="absolute top-0 right-0 pt-4 pr-4">
-        <button type="button" class="bg-white dark:bg-zinc-900 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" data-action="click->edit-attribute-modal#close">
+        <button type="button" class="bg-white dark:bg-zinc-900 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" data-action="click->edit-defect-modal#close">
           <span class="sr-only">Close</span>
           <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -16,23 +16,23 @@
       </div>
       <div>
         <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100" id="modal-title">
-          Edit Attribute
+          Edit Defect
         </h3>
         <div class="mt-2">
-          <%= form_with model: [@character_sheet, attribute], class: "space-y-4" do |f| %>
+          <%= form_with model: [@character_sheet, defect], class: "space-y-4" do |f| %>
             <div>
-              <%= f.label :name, "Attribute Name", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+              <%= f.label :name, "Defect Name", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
               <%= f.text_field :name, class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <%= f.label :level, "Level", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
-                <%= f.number_field :level, min: 0, class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
+                <%= f.label :rank, "Rank", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                <%= f.number_field :rank, min: 0, class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
               </div>
               <div>
-                <%= f.label :points, "Points", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
-                <%= f.number_field :points, min: 0, class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
+                <%= f.label :bp, "BP (Bonus Points)", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                <%= f.number_field :bp, min: 0, class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
               </div>
             </div>
 
@@ -41,18 +41,11 @@
               <%= f.text_area :notes, rows: 3, data: { controller: "markdown-editor" }, class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
             </div>
 
-            <div>
-              <label class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                <%= f.check_box :draft, class: "rounded border-gray-300 text-zinc-900 focus:ring-indigo-500" %>
-                Save as draft
-              </label>
-            </div>
-
             <div class="mt-5 sm:mt-6 flex gap-2">
               <%= f.submit "Save Changes", class: "flex-1 inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-zinc-900 dark:text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm" %>
-              <%= button_to "Delete", character_sheet_character_attribute_path(@character_sheet, attribute), 
+              <%= button_to "Delete", character_sheet_character_defect_path(@character_sheet, defect), 
                             method: :delete, 
-                            data: { confirm: "Are you sure you want to delete this attribute?" }, 
+                            data: { confirm: "Are you sure you want to delete this defect?" }, 
                             class: "inline-flex justify-center rounded-md border border-red-300 dark:border-red-700 shadow-sm px-4 py-2 bg-white dark:bg-zinc-800 text-base font-medium text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm" %>
             </div>
           <% end %>

@@ -13,9 +13,16 @@ class CharacterSheet < ApplicationRecord
   validates :character_name, :player_name, presence: true
   validates :character_points, :body, :mind, :soul,
             :melee_acv, :ranged_acv, :melee_dcv, :ranged_dcv,
-            :health_points, :energy_points,
+            :health_points, :energy_points, :absorb, :armor,
             numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :money, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
+
+  before_validation :ensure_armor_absorb
+
+  def ensure_armor_absorb
+    self.absorb ||= 0
+    self.armor ||= 0
+  end
 
   # --- Hooks for future auto-calculation (optional) ---
   # Uncomment if you later want to compute derived values from core stats.

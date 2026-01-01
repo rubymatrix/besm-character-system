@@ -27,23 +27,23 @@
               </div>
               <div>
                 <%= f.label :points, "CP Cost", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
-                <%= f.number_field :points, min: 0, class: "mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
+                <%= f.number_field :points, min: 0, class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
               </div>
             </div>
 
             <div>
               <%= f.label :name, "Name", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
-              <%= f.text_field :name, class: "mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
+              <%= f.text_field :name, class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
             </div>
 
             <div>
               <%= f.label :summary, "Quick Summary", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
-              <%= f.text_field :summary, class: "mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
+              <%= f.text_field :summary, class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
             </div>
 
             <div>
               <%= f.label :notes, "Detailed Notes", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
-              <%= f.text_area :notes, rows: 3, class: "mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
+              <%= f.text_area :notes, rows: 3, data: { controller: "markdown-editor" }, class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
             </div>
 
             <div>

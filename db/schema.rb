@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_01_062109) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_01_190519) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -140,11 +140,13 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_01_062109) do
     t.text "game_notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "money"
     t.integer "melee_acv", default: 6, null: false
     t.integer "ranged_acv", default: 6, null: false
     t.integer "melee_dcv", default: 6, null: false
     t.integer "ranged_dcv", default: 6, null: false
+    t.integer "money"
+    t.integer "absorb"
+    t.integer "armor"
     t.index ["character_name"], name: "index_character_sheets_on_character_name"
     t.index ["player_name"], name: "index_character_sheets_on_player_name"
   end

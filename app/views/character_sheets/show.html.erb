@@ -3,13 +3,14 @@
 
 <div class="flex h-full overflow-hidden" data-controller="sidebar">
   <%= render "shared/sidebar" %>
-  <div class="flex flex-col flex-1 min-w-0 overflow-auto" data-controller="cp-modal money-modal equipment-modal attribute-modal notes-modal edit-notes-modal">
+  <div class="flex flex-col flex-1 min-w-0 overflow-auto" data-controller="cp-modal money-modal equipment-modal attribute-modal defect-modal notes-modal edit-notes-modal">
 
     <% content_for :title, (@character_sheet&.character_name || "Astra Kisaragi") %>
 
-    <div class="max-w-7xl mx-auto px-4 md:py-12 py-6">
-      <!-- Breadcrumbs -->
-      <nav class="font-heading text-sm mb-6 text-zinc-700 dark:text-zinc-300">
+      <div class="max-w-7xl mx-auto px-4 md:py-12 py-6">
+        <input id="cp-balance-toggle" type="checkbox" class="peer sr-only">
+        <!-- Breadcrumbs -->
+        <nav class="font-heading text-sm mb-6 text-zinc-700 dark:text-zinc-300">
         <ul class="flex items-center space-x-3">
           <li class="after:content-['/'] after:relative after:text-zinc-300 after:left-1 dark:after:text-zinc-500">
             <%= link_to "Character Sheets", character_sheets_path, class: "text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300" %>
@@ -43,10 +44,10 @@
               <span class="text-xs text-red-600 dark:text-red-400 uppercase tracking-wide">Spent</span>
               <div class="font-semibold text-red-700 dark:text-red-300"><%= @character_sheet&.cp_spent || 0 %></div>
             </div>
-            <div class="px-3 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800">
+            <label for="cp-balance-toggle" class="px-3 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 cursor-pointer select-none">
               <span class="text-xs text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">Balance</span>
               <div class="font-semibold text-indigo-700 dark:text-indigo-300"><%= @character_sheet&.cp_balance || 0 %></div>
-            </div>
+            </label>
             <div class="px-3 py-1 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800">
               <span class="text-xs text-yellow-600 dark:text-yellow-400 uppercase tracking-wide">Money</span>
               <div class="font-semibold text-yellow-700 dark:text-yellow-300"><%= @character_sheet&.format_currency || "0c" %></div>
@@ -64,6 +65,12 @@
                   class="inline-flex items-center rounded-2xl px-3 py-2 text-sm font-medium bg-yellow-600 text-zinc-900 dark:text-white hover:bg-yellow-700 shadow transition-colors">
             + Money
           </button>
+          <% if @character_sheet %>
+            <label for="history-modal-toggle"
+                   class="inline-flex items-center rounded-2xl px-3 py-2 text-sm font-medium bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-colors cursor-pointer mr-6">
+              History
+            </label>
+          <% end %>
           <%= link_to "Edit", (@character_sheet ? edit_character_sheet_path(@character_sheet) : "#"), class: "inline-flex items-center rounded-2xl px-3 py-2 text-sm font-medium bg-primary-600 text-zinc-900 dark:text-white hover:bg-primary-700 shadow transition-colors" %>
           <%= link_to "Back", character_sheets_path, class: "inline-flex items-center rounded-2xl px-3 py-2 text-sm font-medium bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-colors" %>
         </div>
@@ -82,7 +89,7 @@
       <% budget_cp = @character_sheet&.cp_budget || (base_cp + earned_cp) %>
       <% spent_cp = @character_sheet&.cp_spent || (attributes_cp - defect_bp + equipment_cp + core_stats_cp) %>
       <% balance_cp = @character_sheet&.cp_balance || (budget_cp - spent_cp) %>
-      <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow p-5 mb-8">
+      <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow p-5 mb-8 hidden peer-checked:block">
         <div class="flex items-center justify-between mb-4">
           <div>
             <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">CP Balance Breakdown</h2>
@@ -148,50 +155,224 @@
         </div>
 
         <!-- Core Stats -->
-        <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow p-5">
-          <h2 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-3">Core Stats</h2>
-          <div class="grid grid-cols-3 gap-3">
-            <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3">
-              <div class="text-xs uppercase tracking-wider text-zinc-500">Body</div>
-              <div class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100"><%= body %></div>
-            </div>
-            <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3">
-              <div class="text-xs uppercase tracking-wider text-zinc-500">Mind</div>
-              <div class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100"><%= mind %></div>
-            </div>
-            <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3">
-              <div class="text-xs uppercase tracking-wider text-zinc-500">Soul</div>
-              <div class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100"><%= soul %></div>
+        <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow p-5 flex flex-col h-full">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Core Stats</h2>
+            <% if @character_sheet %>
+              <label for="core-stats-modal-toggle"
+                     class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors border border-zinc-200 dark:border-zinc-700 cursor-pointer">
+                <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 20h9" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
+                </svg>
+                Edit
+              </label>
+            <% end %>
+          </div>
+          <div class="flex-1 flex flex-col justify-center">
+            <div class="grid grid-cols-2 gap-3">
+              <div class="col-span-2 flex justify-center">
+                <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 min-h-[96px] w-full max-w-[160px] flex flex-col justify-center">
+                  <div class="text-xs uppercase tracking-wider text-zinc-500">Body</div>
+                  <div class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100"><%= body %></div>
+                </div>
+              </div>
+              <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 min-h-[96px] flex flex-col justify-center">
+                <div class="text-xs uppercase tracking-wider text-zinc-500">Mind</div>
+                <div class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100"><%= mind %></div>
+              </div>
+              <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 min-h-[96px] flex flex-col justify-center">
+                <div class="text-xs uppercase tracking-wider text-zinc-500">Soul</div>
+                <div class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100"><%= soul %></div>
+              </div>
             </div>
           </div>
+          <% if @character_sheet %>
+            <input id="core-stats-modal-toggle" type="checkbox" class="peer sr-only">
+            <div id="core-stats-modal" class="hidden peer-checked:block fixed inset-0 z-50 overflow-y-auto" aria-labelledby="core-stats-modal-title" role="dialog" aria-modal="true">
+              <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <label for="core-stats-modal-toggle" class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" aria-hidden="true"></label>
+
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div class="relative z-10 inline-block align-bottom bg-white dark:bg-zinc-900 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6 border border-gray-200 dark:border-zinc-700">
+                  <div class="absolute top-0 right-0 pt-4 pr-4">
+                    <label for="core-stats-modal-toggle" class="bg-white dark:bg-zinc-900 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer">
+                      <span class="sr-only">Close</span>
+                      <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </label>
+                  </div>
+                  <div>
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100" id="core-stats-modal-title">
+                      Edit Core Stats
+                    </h3>
+                    <div class="mt-4">
+                      <%= form_with model: @character_sheet, class: "space-y-4" do |f| %>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                          <div>
+                            <%= f.label :body, "Body", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                            <%= f.number_field :body, min: 0, class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
+                          </div>
+                          <div>
+                            <%= f.label :mind, "Mind", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                            <%= f.number_field :mind, min: 0, class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
+                          </div>
+                          <div>
+                            <%= f.label :soul, "Soul", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                            <%= f.number_field :soul, min: 0, class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
+                          </div>
+                        </div>
+
+                        <div class="mt-5 sm:mt-6 flex gap-2">
+                          <%= f.submit "Save Changes", class: "inline-flex justify-center flex-1 rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-zinc-900 dark:text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:text-sm shadow" %>
+                          <label for="core-stats-modal-toggle" class="inline-flex justify-center flex-1 rounded-md border border-gray-300 dark:border-zinc-700 shadow-sm px-4 py-2 bg-white dark:bg-zinc-800 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm cursor-pointer">
+                            Cancel
+                          </label>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
         </div>
 
         <!-- Derived Values -->
         <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow p-5">
-          <h2 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-3">Derived Values</h2>
-          <% melee_acv = @character_sheet&.melee_acv || 6 %>
-          <% ranged_acv = @character_sheet&.ranged_acv || 6 %>
-          <% melee_dcv = @character_sheet&.melee_dcv || 5 %>
-          <% ranged_dcv = @character_sheet&.ranged_dcv || 5 %>
-          <% hp  = @character_sheet&.health_points || 55 %>
-          <% ep  = @character_sheet&.energy_points || 40 %>
-          <% dmg = @character_sheet&.damage_multiplier || "x2" %>
-          <dl class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-            <dt class="text-zinc-500">Melee Attack Combat Value (ACV)</dt>
-            <dd class="font-medium text-zinc-900 dark:text-zinc-100"><%= melee_acv %></dd>
-            <dt class="text-zinc-500">Ranged Attack Combat Value (ACV)</dt>
-            <dd class="font-medium text-zinc-900 dark:text-zinc-100"><%= ranged_acv %></dd>
-            <dt class="text-zinc-500">Melee Defence Combat Value (DCV)</dt>
-            <dd class="font-medium text-zinc-900 dark:text-zinc-100"><%= melee_dcv %></dd>
-            <dt class="text-zinc-500">Ranged Defence Combat Value (DCV)</dt>
-            <dd class="font-medium text-zinc-900 dark:text-zinc-100"><%= ranged_dcv %></dd>
-            <dt class="text-zinc-500">Health Points</dt>
-            <dd class="font-medium text-zinc-900 dark:text-zinc-100"><%= hp %></dd>
-            <dt class="text-zinc-500">Energy Points</dt>
-            <dd class="font-medium text-zinc-900 dark:text-zinc-100"><%= ep %></dd>
-            <dt class="text-zinc-500">Damage Multiplier</dt>
-            <dd class="font-medium text-zinc-900 dark:text-zinc-100"><%= dmg %></dd>
-          </dl>
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Derived Values</h2>
+            <% if @character_sheet %>
+              <label for="derived-values-modal-toggle"
+                     class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors border border-zinc-200 dark:border-zinc-700 cursor-pointer">
+                <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 20h9" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
+                </svg>
+                Edit
+              </label>
+            <% end %>
+          </div>
+          <div class="grid grid-cols-3 gap-3">
+            <!-- Row 1 -->
+            <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3">
+              <div class="text-[10px] uppercase tracking-[0.15em] text-zinc-500 font-bold mb-1">Health</div>
+              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.health_points || 0 %></div>
+            </div>
+            <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3">
+              <div class="text-[10px] uppercase tracking-[0.15em] text-zinc-500 font-bold mb-1">Energy</div>
+              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.energy_points || 0 %></div>
+            </div>
+            <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3">
+              <div class="text-[10px] uppercase tracking-[0.15em] text-zinc-500 font-bold mb-1">Absorb</div>
+              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.absorb || 0 %></div>
+            </div>
+
+            <!-- Row 2 -->
+            <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3">
+              <div class="text-[10px] uppercase tracking-[0.15em] text-zinc-500 font-bold mb-1">Melee DCV</div>
+              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.melee_dcv || 0 %></div>
+            </div>
+            <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3">
+              <div class="text-[10px] uppercase tracking-[0.15em] text-zinc-500 font-bold mb-1">Ranged DCV</div>
+              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.ranged_dcv || 0 %></div>
+            </div>
+            <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3">
+              <div class="text-[10px] uppercase tracking-[0.15em] text-zinc-500 font-bold mb-1">Armor</div>
+              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.armor || 0 %></div>
+            </div>
+
+            <!-- Row 3 -->
+            <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3">
+              <div class="text-[10px] uppercase tracking-[0.15em] text-zinc-500 font-bold mb-1">Melee ACV</div>
+              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.melee_acv || 0 %></div>
+            </div>
+            <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3">
+              <div class="text-[10px] uppercase tracking-[0.15em] text-zinc-500 font-bold mb-1">Ranged ACV</div>
+              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.ranged_acv || 0 %></div>
+            </div>
+            <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3">
+              <div class="text-[10px] uppercase tracking-[0.15em] text-zinc-500 font-bold mb-1">DM</div>
+              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.damage_multiplier || "x2" %></div>
+            </div>
+          </div>
+          <% if @character_sheet %>
+            <input id="derived-values-modal-toggle" type="checkbox" class="peer sr-only">
+            <div id="derived-values-modal" class="hidden peer-checked:block fixed inset-0 z-50 overflow-y-auto" aria-labelledby="derived-values-modal-title" role="dialog" aria-modal="true">
+              <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <label for="derived-values-modal-toggle" class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" aria-hidden="true"></label>
+
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div class="relative z-10 inline-block align-bottom bg-white dark:bg-zinc-900 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full sm:p-6 border border-gray-200 dark:border-zinc-700">
+                  <div class="absolute top-0 right-0 pt-4 pr-4">
+                    <label for="derived-values-modal-toggle" class="bg-white dark:bg-zinc-900 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer">
+                      <span class="sr-only">Close</span>
+                      <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </label>
+                  </div>
+                  <div>
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100" id="derived-values-modal-title">
+                      Edit Derived Values
+                    </h3>
+                    <div class="mt-4">
+                      <%= form_with model: @character_sheet, class: "space-y-6" do |f| %>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                          <div>
+                            <%= f.label :health_points, "Health", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                            <%= f.number_field :health_points, min: 0, class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
+                          </div>
+                          <div>
+                            <%= f.label :energy_points, "Energy", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                            <%= f.number_field :energy_points, min: 0, class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
+                          </div>
+                          <div>
+                            <%= f.label :absorb, "Absorb", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                            <%= f.number_field :absorb, min: 0, class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
+                          </div>
+                          <div>
+                            <%= f.label :melee_dcv, "Melee DCV", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                            <%= f.number_field :melee_dcv, min: 0, class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
+                          </div>
+                          <div>
+                            <%= f.label :ranged_dcv, "Ranged DCV", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                            <%= f.number_field :ranged_dcv, min: 0, class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
+                          </div>
+                          <div>
+                            <%= f.label :armor, "Armor", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                            <%= f.number_field :armor, min: 0, class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
+                          </div>
+                          <div>
+                            <%= f.label :melee_acv, "Melee ACV", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                            <%= f.number_field :melee_acv, min: 0, class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
+                          </div>
+                          <div>
+                            <%= f.label :ranged_acv, "Ranged ACV", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                            <%= f.number_field :ranged_acv, min: 0, class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
+                          </div>
+                          <div>
+                            <%= f.label :damage_multiplier, "Damage Multiplier", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                            <%= f.text_field :damage_multiplier, placeholder: "x2", class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
+                          </div>
+                        </div>
+
+                        <div class="mt-5 sm:mt-6 flex gap-2">
+                          <%= f.submit "Save Changes", class: "inline-flex justify-center flex-1 rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-zinc-900 dark:text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:text-sm shadow" %>
+                          <label for="derived-values-modal-toggle" class="inline-flex justify-center flex-1 rounded-md border border-gray-300 dark:border-zinc-700 shadow-sm px-4 py-2 bg-white dark:bg-zinc-800 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm cursor-pointer">
+                            Cancel
+                          </label>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
         </div>
       </div>
 
@@ -216,166 +397,206 @@
               </button>
             </div>
           </div>
-          <div class="overflow-x-auto">
-            <table class="min-w-full text-sm table-auto">
-              <thead>
-              <tr class="text-left text-zinc-500 border-b border-zinc-100 dark:border-zinc-800">
-                <th class="px-5 py-3 w-full">Attribute</th>
-                <th class="px-5 py-3 whitespace-nowrap">Level</th>
-                <th class="px-5 py-3 whitespace-nowrap">Points</th>
-                <th class="px-5 py-3 w-10 whitespace-nowrap"></th>
-              </tr>
-              </thead>
-              <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
-              <% if @character_sheet&.character_attributes&.any? %>
-                <% attributes = @character_sheet.character_attributes.to_a %>
-                <% published_attributes = attributes.reject(&:draft?) %>
-                <% draft_attributes = attributes.select(&:draft?) %>
-              <% else %>
-                <% published_attributes = [
-                  { name: "Combat Technique: Starblade", level: 2, points: 8 },
-                  { name: "Heightened Senses", level: 1, points: 2 },
-                  { name: "Item of Power: Photon Katana", level: 1, points: 4 }
-                ] %>
-                <% draft_attributes = [] %>
-              <% end %>
-              <% published_attributes.each do |attr| %>
-                <% attr_name = attr.respond_to?(:name) ? attr.name : attr[:name] %>
-                <% attr_level = attr.respond_to?(:level) ? attr.level : attr[:level] %>
-                <% attr_points = attr.respond_to?(:cost_points) ? attr.cost_points : attr[:points] %>
-                <% notes = attr.respond_to?(:notes) ? attr.notes : attr[:notes] %>
-                <tr>
-                  <td class="px-5 py-3 w-full font-medium text-zinc-900 dark:text-zinc-100">
-                    <%= attr_name %>
-                    <% if notes.present? %>
-                      <div class="mt-1 text-xs font-normal text-zinc-500 dark:text-zinc-400">
-                        <%= notes.to_s.gsub("\\n", "<br>").html_safe %>
-                      </div>
-                    <% end %>
-                  </td>
-                  <td class="px-5 py-3 whitespace-nowrap"><%= attr_level %></td>
-                  <td class="px-5 py-3 whitespace-nowrap"><%= attr_points %></td>
-                  <td class="px-5 py-3 text-right whitespace-nowrap">
-                    <% if attr.respond_to?(:id) %>
-                      <div class="inline-flex items-center justify-end" data-controller="edit-attribute-modal">
-                        <button type="button"
-                                data-action="edit-attribute-modal#open"
-                                class="inline-flex items-center justify-center rounded-full p-1 text-zinc-400 hover:text-zinc-600"
-                                title="Edit">
-                          <span class="sr-only">Edit</span>
-                          <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M4 13.5V16h2.5L15 7.5 12.5 5 4 13.5zm11.8-7.8a1 1 0 000-1.4L14.7 3a1 1 0 00-1.4 0l-1.2 1.2 2.5 2.5 1.2-1.2z" />
-                          </svg>
-                        </button>
-                        <%= render "edit_attribute_modal", attribute: attr %>
-                      </div>
-                    <% end %>
-                  </td>
-                </tr>
-              <% end %>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <% if draft_attributes.any? %>
-          <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow mt-6">
-            <div class="flex items-center justify-between p-5 border-b border-zinc-100 dark:border-zinc-800">
-              <div class="flex items-center gap-2">
-                <h3 class="text-sm font-semibold text-zinc-700 dark:text-zinc-200">Draft Attributes</h3>
-                <span class="text-[11px] font-medium text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full">Not applied</span>
-              </div>
-              <span class="text-xs text-zinc-500">Level / Points</span>
-            </div>
-            <div class="overflow-x-auto">
-              <table class="min-w-full text-sm table-auto">
-                <thead>
-                <tr class="text-left text-zinc-500 border-b border-zinc-100 dark:border-zinc-800">
-                  <th class="px-5 py-3 w-full">Attribute</th>
-                  <th class="px-5 py-3 whitespace-nowrap">Level</th>
-                  <th class="px-5 py-3 whitespace-nowrap">Points</th>
-                  <th class="px-5 py-3 w-10 whitespace-nowrap"></th>
-                </tr>
-                </thead>
-                <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
-                <% draft_attributes.each do |attr| %>
+          <div class="p-5 space-y-3">
+            <% if @character_sheet&.character_attributes&.any? %>
+              <% attributes = @character_sheet.character_attributes.to_a %>
+              <% published_attributes = attributes.reject(&:draft?) %>
+              <% draft_attributes = attributes.select(&:draft?) %>
+            <% else %>
+              <% published_attributes = [
+                { name: "Combat Technique: Starblade", level: 2, points: 8 },
+                { name: "Heightened Senses", level: 1, points: 2 },
+                { name: "Item of Power: Photon Katana", level: 1, points: 4 }
+              ] %>
+              <% draft_attributes = [] %>
+            <% end %>
+            
+            <% if published_attributes.any? %>
+              <div class="flex flex-wrap gap-3">
+                <% published_attributes.each do |attr| %>
                   <% attr_name = attr.respond_to?(:name) ? attr.name : attr[:name] %>
                   <% attr_level = attr.respond_to?(:level) ? attr.level : attr[:level] %>
                   <% attr_points = attr.respond_to?(:cost_points) ? attr.cost_points : attr[:points] %>
                   <% notes = attr.respond_to?(:notes) ? attr.notes : attr[:notes] %>
-                  <tr>
-                    <td class="px-5 py-3 w-full font-medium text-zinc-900 dark:text-zinc-100">
-                      <%= attr_name %>
+                  <div class="group relative flex items-center gap-2 text-sm border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-2 bg-zinc-50/50 dark:bg-zinc-800/30">
+                    <div class="flex flex-col">
+                      <div class="flex items-center gap-2">
+                        <span class="font-semibold text-zinc-900 dark:text-zinc-100"><%= attr_name %></span>
+                        <span class="text-[10px] px-1.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-500 uppercase tracking-tight">Lvl <%= attr_level %></span>
+                        <% if attr_points.to_i > 0 %>
+                          <span class="text-[10px] font-bold text-red-600 dark:text-red-400"><%= attr_points %> CP</span>
+                        <% end %>
+                      </div>
                       <% if notes.present? %>
-                        <div class="mt-1 text-xs font-normal text-zinc-500 dark:text-zinc-400">
-                          <%= notes.to_s.gsub("\\n", "<br>").html_safe %>
+                        <div class="text-zinc-600 dark:text-zinc-400 text-xs mt-0.5" data-controller="markdown" data-markdown-target="content">
+                          <%= notes %>
                         </div>
                       <% end %>
-                    </td>
-                    <td class="px-5 py-3 text-zinc-400 dark:text-zinc-500 whitespace-nowrap"><%= attr_level %></td>
-                    <td class="px-5 py-3 text-zinc-400 dark:text-zinc-500 whitespace-nowrap"><%= attr_points %></td>
-                    <td class="px-5 py-3 text-right whitespace-nowrap">
+                    </div>
+                    <% if attr.respond_to?(:id) %>
+                      <div class="absolute -top-2 -right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity" data-controller="edit-attribute-modal">
+                        <button type="button"
+                                data-action="edit-attribute-modal#open"
+                                class="bg-white dark:bg-zinc-900 text-zinc-400 hover:text-zinc-600 rounded-full border border-zinc-200 dark:border-zinc-800 p-0.5 shadow-sm"
+                                title="Edit">
+                          <span class="sr-only">Edit</span>
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M4 13.5V16h2.5L15 7.5 12.5 5 4 13.5zm11.8-7.8a1 1 0 000-1.4L14.7 3a1 1 0 00-1.4 0l-1.2 1.2 2.5 2.5 1.2-1.2z" />
+                          </svg>
+                        </button>
+                        <%= button_to character_sheet_character_attribute_path(@character_sheet, attr), 
+                                       method: :delete, 
+                                       data: { confirm: "Are you sure you want to delete this attribute?" }, 
+                                       class: "bg-white dark:bg-zinc-900 text-zinc-400 hover:text-red-600 rounded-full border border-zinc-200 dark:border-zinc-800 p-0.5 shadow-sm" do %>
+                          <span class="sr-only">Delete</span>
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                          </svg>
+                        <% end %>
+                        <%= render "edit_attribute_modal", attribute: attr %>
+                      </div>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <p class="text-sm text-zinc-500 dark:text-zinc-400 italic">No attributes added yet.</p>
+            <% end %>
+
+            <% if draft_attributes.any? %>
+              <div class="space-y-3 mt-6">
+                <div class="flex items-center gap-2">
+                  <div class="text-[11px] font-semibold uppercase tracking-wide text-zinc-500">Drafts</div>
+                  <span class="text-[11px] font-medium text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full">Not applied</span>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                  <% draft_attributes.each do |attr| %>
+                    <% attr_name = attr.respond_to?(:name) ? attr.name : attr[:name] %>
+                    <% attr_level = attr.respond_to?(:level) ? attr.level : attr[:level] %>
+                    <% attr_points = attr.respond_to?(:cost_points) ? attr.cost_points : attr[:points] %>
+                    <% notes = attr.respond_to?(:notes) ? attr.notes : attr[:notes] %>
+                    <div class="group relative flex items-center gap-2 text-sm border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-2 bg-zinc-50/50 dark:bg-zinc-800/30">
+                      <div class="flex flex-col">
+                        <div class="flex items-center gap-2">
+                          <span class="font-semibold text-zinc-900 dark:text-zinc-100"><%= attr_name %></span>
+                          <span class="text-[10px] px-1.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-500 uppercase tracking-tight">Lvl <%= attr_level %></span>
+                          <% if attr_points.to_i > 0 %>
+                            <span class="text-[10px] font-bold text-zinc-400 dark:text-zinc-500"><%= attr_points %> CP</span>
+                          <% end %>
+                        </div>
+                        <% if notes.present? %>
+                          <div class="text-zinc-600 dark:text-zinc-400 text-xs mt-0.5" data-controller="markdown" data-markdown-target="content">
+                            <%= notes %>
+                          </div>
+                        <% end %>
+                      </div>
                       <% if attr.respond_to?(:id) %>
-                        <div class="inline-flex items-center justify-end gap-1" data-controller="edit-attribute-modal">
+                        <div class="absolute -top-2 -right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity" data-controller="edit-attribute-modal">
                           <button type="button"
                                   data-action="edit-attribute-modal#open"
-                                  class="inline-flex items-center justify-center rounded-full p-1 text-zinc-400 hover:text-zinc-600"
+                                  class="bg-white dark:bg-zinc-900 text-zinc-400 hover:text-zinc-600 rounded-full border border-zinc-200 dark:border-zinc-800 p-0.5 shadow-sm"
                                   title="Edit">
                             <span class="sr-only">Edit</span>
-                            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
                               <path d="M4 13.5V16h2.5L15 7.5 12.5 5 4 13.5zm11.8-7.8a1 1 0 000-1.4L14.7 3a1 1 0 00-1.4 0l-1.2 1.2 2.5 2.5 1.2-1.2z" />
                             </svg>
                           </button>
                           <%= button_to publish_character_sheet_character_attribute_path(@character_sheet, attr),
                                         method: :patch,
-                                        class: "inline-flex items-center justify-center rounded-full p-1 text-emerald-600 hover:text-emerald-500",
+                                        class: "bg-white dark:bg-zinc-900 text-emerald-600 hover:text-emerald-500 rounded-full border border-zinc-200 dark:border-zinc-800 p-0.5 shadow-sm",
                                         title: "Publish" do %>
                             <span class="sr-only">Publish</span>
-                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                              <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm-1 14.5l-4-4 1.4-1.4L11 12.7l5.6-5.6L18 8.5l-7 8z"/>
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
+                              <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1.2-4.6l-3.2-3.2 1.4-1.4 1.8 1.8 4-4 1.4 1.4-5.4 5.4z" />
+                            </svg>
+                          <% end %>
+                          <%= button_to character_sheet_character_attribute_path(@character_sheet, attr), 
+                                         method: :delete, 
+                                         data: { confirm: "Are you sure you want to delete this attribute?" }, 
+                                         class: "bg-white dark:bg-zinc-900 text-zinc-400 hover:text-red-600 rounded-full border border-zinc-200 dark:border-zinc-800 p-0.5 shadow-sm" do %>
+                            <span class="sr-only">Delete</span>
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
+                              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
                             </svg>
                           <% end %>
                           <%= render "edit_attribute_modal", attribute: attr %>
                         </div>
                       <% end %>
-                    </td>
-                  </tr>
-                <% end %>
-                </tbody>
-              </table>
-            </div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
           </div>
-        <% end %>
+        </div>
 
-        <!-- Defects Table -->
+        <!-- Defects List -->
         <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow">
-          <div class="p-5 border-b border-zinc-100 dark:border-zinc-800 flex items-center gap-2">
-            <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">Defects</h2>
-            <span class="text-xs font-medium text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full"><%= @character_sheet&.total_defect_bp || 0 %> BP</span>
+          <div class="p-5 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">Defects</h2>
+              <span class="text-xs font-medium text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full"><%= @character_sheet&.total_defect_bp || 0 %> BP</span>
+            </div>
+            <button type="button"
+                    data-action="defect-modal#open"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors border border-zinc-200 dark:border-zinc-700">
+              <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              Add Defect
+            </button>
           </div>
-          <div class="overflow-x-auto">
-            <table class="min-w-full text-sm">
-              <thead>
-              <tr class="text-left text-zinc-500 border-b border-zinc-100 dark:border-zinc-800">
-                <th class="px-5 py-3">Defect</th>
-                <th class="px-5 py-3">Rank</th>
-                <th class="px-5 py-3">BP</th>
-              </tr>
-              </thead>
-              <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
-              <% defects = @character_sheet&.defects_list || [
-                { name: "Marked", rank: 1, bp: 1 },
-                { name: "Enemy: Syndicate", rank: 2, bp: 2 }
-              ] %>
-              <% defects.each do |d| %>
-                <tr>
-                  <td class="px-5 py-3 font-medium text-zinc-900 dark:text-zinc-100"><%= d[:name] %></td>
-                  <td class="px-5 py-3"><%= d[:rank] %></td>
-                  <td class="px-5 py-3"><%= d[:bp] %></td>
-                </tr>
-              <% end %>
-              </tbody>
-            </table>
+          <div class="p-5 space-y-3">
+            <% if @character_sheet&.character_defects&.any? %>
+              <% defects = @character_sheet.character_defects.to_a %>
+            <% else %>
+              <% defects = [] %>
+            <% end %>
+            <% if defects.any? %>
+              <div class="flex flex-wrap gap-3">
+                <% defects.each do |d| %>
+                  <div class="group relative flex items-center gap-2 text-sm border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-2 bg-zinc-50/50 dark:bg-zinc-800/30">
+                    <div class="flex flex-col">
+                      <div class="flex items-center gap-2">
+                        <span class="font-semibold text-zinc-900 dark:text-zinc-100"><%= d.name %></span>
+                        <span class="text-[10px] px-1.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-500 uppercase tracking-tight">Rank <%= d.rank %></span>
+                        <% if d.bp.to_i > 0 %>
+                          <span class="text-[10px] font-bold text-green-600 dark:text-green-400"><%= d.bp %> BP</span>
+                        <% end %>
+                      </div>
+                      <% if d.notes.present? %>
+                        <div class="text-zinc-600 dark:text-zinc-400 text-xs mt-0.5" data-controller="markdown" data-markdown-target="content">
+                          <%= d.notes %>
+                        </div>
+                      <% end %>
+                    </div>
+                    <div class="absolute -top-2 -right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity" data-controller="edit-defect-modal">
+                      <button type="button"
+                              data-action="edit-defect-modal#open"
+                              class="bg-white dark:bg-zinc-900 text-zinc-400 hover:text-zinc-600 rounded-full border border-zinc-200 dark:border-zinc-800 p-0.5 shadow-sm"
+                              title="Edit">
+                        <span class="sr-only">Edit</span>
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M4 13.5V16h2.5L15 7.5 12.5 5 4 13.5zm11.8-7.8a1 1 0 000-1.4L14.7 3a1 1 0 00-1.4 0l-1.2 1.2 2.5 2.5 1.2-1.2z" />
+                        </svg>
+                      </button>
+                      <%= button_to character_sheet_character_defect_path(@character_sheet, d), 
+                                     method: :delete, 
+                                     data: { confirm: "Are you sure you want to delete this defect?" }, 
+                                     class: "bg-white dark:bg-zinc-900 text-zinc-400 hover:text-red-600 rounded-full border border-zinc-200 dark:border-zinc-800 p-0.5 shadow-sm" do %>
+                        <span class="sr-only">Delete</span>
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                      <% end %>
+                      <%= render "edit_defect_modal", defect: d %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <p class="text-sm text-zinc-500 dark:text-zinc-400 italic">No defects added yet.</p>
+            <% end %>
           </div>
         </div>
       </div>
@@ -423,9 +644,9 @@
                         <% end %>
                       </div>
                       <% if e.summary.present? || e.notes.present? %>
-                        <span class="text-zinc-600 dark:text-zinc-400 text-xs mt-0.5">
-                          <%= e.summary.to_s.gsub("\\n", "<br>").html_safe.presence || e.notes.to_s.gsub("\\n", "<br>").html_safe %>
-                        </span>
+                        <div class="text-zinc-600 dark:text-zinc-400 text-xs mt-0.5" data-controller="markdown" data-markdown-target="content">
+                          <%= e.summary.presence || e.notes %>
+                        </div>
                       <% end %>
                     </div>
                     <div class="absolute -top-2 -right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity" data-controller="edit-equipment-modal">
@@ -475,9 +696,9 @@
                         <% end %>
                       </div>
                       <% if e.summary.present? || e.notes.present? %>
-                        <span class="text-zinc-600 dark:text-zinc-400 text-xs mt-0.5">
-                          <%= e.summary.to_s.gsub("\\n", "<br>").html_safe.presence || e.notes.to_s.gsub("\\n", "<br>").html_safe %>
-                        </span>
+                        <div class="text-zinc-600 dark:text-zinc-400 text-xs mt-0.5" data-controller="markdown" data-markdown-target="content">
+                          <%= e.summary.presence || e.notes %>
+                        </div>
                       <% end %>
                     </div>
                     <div class="absolute -top-2 -right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity" data-controller="edit-equipment-modal">
@@ -542,84 +763,126 @@
           </div>
         </div>
         <div class="p-5">
-          <pre id="game-notes-content" class="whitespace-pre-wrap text-sm leading-relaxed text-zinc-800 dark:text-zinc-200"><%= @character_sheet&.game_notes %></pre>
+          <div id="game-notes-content" class="prose prose-sm prose-neutral dark:prose-invert max-w-none" data-controller="markdown" data-markdown-target="content">
+            <%= @character_sheet&.game_notes %>
+          </div>
         </div>
       </div>
-      <!-- CP History -->
-      <% if @character_sheet && @character_sheet.character_point_adjustments.any? %>
-        <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow mt-8">
-          <div class="p-5 border-b border-zinc-100 dark:border-zinc-800">
-            <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">Character Point History</h2>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="min-w-full text-sm">
-              <thead>
-                <tr class="text-left text-zinc-500 border-b border-zinc-100 dark:border-zinc-800">
-                  <th class="px-5 py-3">Date</th>
-                  <th class="px-5 py-3">Reason</th>
-                  <th class="px-5 py-3 text-right">Points</th>
-                  <th class="px-5 py-3"></th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
-                <% @character_sheet.character_point_adjustments.order(created_at: :desc).each do |adj| %>
-                  <tr>
-                    <td class="px-5 py-3 text-zinc-600 dark:text-zinc-400"><%= adj.created_at.strftime("%b %d, %Y") %></td>
-                    <td class="px-5 py-3 font-medium text-zinc-900 dark:text-zinc-100"><%= adj.reason %></td>
-                    <td class="px-5 py-3 text-right font-medium <%= adj.points >= 0 ? "text-green-600" : "text-red-600" %>">
-                      <%= adj.points >= 0 ? "+#{adj.points}" : adj.points %>
-                    </td>
-                    <td class="px-5 py-3 text-right">
-                      <%= button_to "×", character_sheet_character_point_adjustment_path(@character_sheet, adj), method: :delete, data: { confirm: "Are you sure?" }, class: "text-zinc-400 hover:text-red-600 transition-colors" %>
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      <% end %>
-      <!-- Money History -->
-      <% if @character_sheet && @character_sheet.money_adjustments.any? %>
-        <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow mt-8">
-          <div class="p-5 border-b border-zinc-100 dark:border-zinc-800">
-            <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">Money Transaction History</h2>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="min-w-full text-sm">
-              <thead>
-                <tr class="text-left text-zinc-500 border-b border-zinc-100 dark:border-zinc-800">
-                  <th class="px-5 py-3">Date</th>
-                  <th class="px-5 py-3">Reason</th>
-                  <th class="px-5 py-3 text-right">Amount</th>
-                  <th class="px-5 py-3"></th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
-                <% @character_sheet.money_adjustments.order(created_at: :desc).each do |adj| %>
-                  <tr>
-                    <td class="px-5 py-3 text-zinc-600 dark:text-zinc-400"><%= adj.created_at.strftime("%b %d, %Y") %></td>
-                    <td class="px-5 py-3 font-medium text-zinc-900 dark:text-zinc-100"><%= adj.reason %></td>
-                    <td class="px-5 py-3 text-right font-medium <%= adj.amount >= 0 ? "text-green-600" : "text-red-600" %>">
-                      <%= @character_sheet.format_currency(adj.amount) %>
-                    </td>
-                    <td class="px-5 py-3 text-right">
-                      <%= button_to "×", character_sheet_money_adjustment_path(@character_sheet, adj), method: :delete, data: { confirm: "Are you sure?" }, class: "text-zinc-400 hover:text-red-600 transition-colors" %>
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      <% end %>
     </div>
+
+    <% if @character_sheet %>
+      <div class="relative">
+        <input id="history-modal-toggle" type="checkbox" class="peer sr-only">
+        <div id="history-modal" class="hidden peer-checked:block fixed inset-0 z-50 overflow-y-auto" aria-labelledby="history-modal-title" role="dialog" aria-modal="true">
+          <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <label for="history-modal-toggle" class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" aria-hidden="true"></label>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div class="relative z-10 inline-block align-bottom bg-white dark:bg-zinc-900 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full sm:p-6 border border-gray-200 dark:border-zinc-700">
+              <div class="absolute top-0 right-0 pt-4 pr-4">
+                <label for="history-modal-toggle" class="bg-white dark:bg-zinc-900 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer">
+                  <span class="sr-only">Close</span>
+                  <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </label>
+              </div>
+              <div>
+                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100 mb-4" id="history-modal-title">
+                  History
+                </h3>
+                <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden" data-controller="railsui-tabs"
+                     data-railsui-tabs-active-tab="px-4 py-2 text-sm font-medium text-zinc-900 dark:text-zinc-100 border-b-2 border-primary-500"
+                     data-railsui-tabs-inactive-tab="px-4 py-2 text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">
+                  <div class="flex items-center gap-2 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-800/60 px-2 py-2">
+                    <button type="button" data-railsui-tabs-target="tab" data-action="click->railsui-tabs#change">
+                      Points
+                    </button>
+                    <button type="button" data-railsui-tabs-target="tab" data-action="click->railsui-tabs#change">
+                      Money
+                    </button>
+                  </div>
+                  <div class="p-4">
+                    <div data-railsui-tabs-target="panel">
+                      <% if @character_sheet.character_point_adjustments.any? %>
+                        <div class="overflow-x-auto">
+                          <table class="min-w-full text-sm">
+                            <thead>
+                              <tr class="text-left text-zinc-500 border-b border-zinc-100 dark:border-zinc-800">
+                                <th class="px-5 py-3">Date</th>
+                                <th class="px-5 py-3">Reason</th>
+                                <th class="px-5 py-3 text-right">Points</th>
+                                <th class="px-5 py-3"></th>
+                              </tr>
+                            </thead>
+                            <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+                              <% @character_sheet.character_point_adjustments.order(created_at: :desc).each do |adj| %>
+                                <tr>
+                                  <td class="px-5 py-3 text-zinc-600 dark:text-zinc-400"><%= adj.created_at.strftime("%b %d, %Y") %></td>
+                                  <td class="px-5 py-3 font-medium text-zinc-900 dark:text-zinc-100"><%= adj.reason %></td>
+                                  <td class="px-5 py-3 text-right font-medium <%= adj.points >= 0 ? "text-green-600" : "text-red-600" %>">
+                                    <%= adj.points >= 0 ? "+#{adj.points}" : adj.points %>
+                                  </td>
+                                  <td class="px-5 py-3 text-right">
+                                    <%= button_to "×", character_sheet_character_point_adjustment_path(@character_sheet, adj), method: :delete, data: { confirm: "Are you sure?" }, class: "text-zinc-400 hover:text-red-600 transition-colors" %>
+                                  </td>
+                                </tr>
+                              <% end %>
+                            </tbody>
+                          </table>
+                        </div>
+                      <% else %>
+                        <p class="text-sm text-zinc-500 dark:text-zinc-400 italic">No point adjustments yet.</p>
+                      <% end %>
+                    </div>
+                    <div data-railsui-tabs-target="panel" class="hidden">
+                      <% if @character_sheet.money_adjustments.any? %>
+                        <div class="overflow-x-auto">
+                          <table class="min-w-full text-sm">
+                            <thead>
+                              <tr class="text-left text-zinc-500 border-b border-zinc-100 dark:border-zinc-800">
+                                <th class="px-5 py-3">Date</th>
+                                <th class="px-5 py-3">Reason</th>
+                                <th class="px-5 py-3 text-right">Amount</th>
+                                <th class="px-5 py-3"></th>
+                              </tr>
+                            </thead>
+                            <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+                              <% @character_sheet.money_adjustments.order(created_at: :desc).each do |adj| %>
+                                <tr>
+                                  <td class="px-5 py-3 text-zinc-600 dark:text-zinc-400"><%= adj.created_at.strftime("%b %d, %Y") %></td>
+                                  <td class="px-5 py-3 font-medium text-zinc-900 dark:text-zinc-100"><%= adj.reason %></td>
+                                  <td class="px-5 py-3 text-right font-medium <%= adj.amount >= 0 ? "text-green-600" : "text-red-600" %>">
+                                    <%= @character_sheet.format_currency(adj.amount) %>
+                                  </td>
+                                  <td class="px-5 py-3 text-right">
+                                    <%= button_to "×", character_sheet_money_adjustment_path(@character_sheet, adj), method: :delete, data: { confirm: "Are you sure?" }, class: "text-zinc-400 hover:text-red-600 transition-colors" %>
+                                  </td>
+                                </tr>
+                              <% end %>
+                            </tbody>
+                          </table>
+                        </div>
+                      <% else %>
+                        <p class="text-sm text-zinc-500 dark:text-zinc-400 italic">No money transactions yet.</p>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
 
     <%= render "new_cp_modal" if @character_sheet %>
     <%= render "new_money_modal" if @character_sheet %>
     <%= render "new_equipment_modal" if @character_sheet %>
     <%= render "new_note_modal" if @character_sheet %>
     <%= render "new_attribute_modal" if @character_sheet %>
+    <%= render "new_defect_modal" if @character_sheet %>
     <%= render "edit_notes_modal" if @character_sheet %>
   </div>
 </div>

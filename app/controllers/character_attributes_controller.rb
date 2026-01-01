@@ -31,6 +31,12 @@ class CharacterAttributesController < ApplicationController
     end
   end
 
+  def destroy
+    @character_attribute = @character_sheet.character_attributes.find(params[:id])
+    @character_attribute.destroy
+    redirect_to @character_sheet, notice: "Attribute was deleted."
+  end
+
   private
 
   def set_character_sheet
