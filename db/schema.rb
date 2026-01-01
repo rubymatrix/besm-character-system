@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_30_222303) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_01_062109) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -96,6 +96,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_30_222303) do
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "draft", default: false, null: false
     t.index ["character_sheet_id", "name"], name: "index_character_attributes_on_character_sheet_id_and_name"
     t.index ["character_sheet_id"], name: "index_character_attributes_on_character_sheet_id"
   end
@@ -157,6 +158,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_30_222303) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "points"
+    t.boolean "draft", default: false, null: false
     t.index ["character_sheet_id", "kind"], name: "index_equipment_entries_on_character_sheet_id_and_kind"
     t.index ["character_sheet_id"], name: "index_equipment_entries_on_character_sheet_id"
   end

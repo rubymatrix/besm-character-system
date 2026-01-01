@@ -32,7 +32,7 @@ class CharacterSheet < ApplicationRecord
   # --- Back-compat helpers for the current view ---
   def attributes_list
     character_attributes.map do |a|
-      { name: a.name, level: a.level, points: a.cost_points, notes: a.notes }
+      { name: a.name, level: a.level, points: a.cost_points, notes: a.notes, draft: a.draft }
     end
   end
 
@@ -51,7 +51,7 @@ class CharacterSheet < ApplicationRecord
   end
 
   def total_attribute_points
-    character_attributes.sum { |a| a.cost_points }
+    character_attributes.select { |a| !a.draft? }.sum { |a| a.cost_points }
   end
 
   def total_defect_bp
@@ -59,7 +59,7 @@ class CharacterSheet < ApplicationRecord
   end
 
   def total_equipment_points
-    equipment_entries.sum(:points)
+    equipment_entries.where(draft: false).sum(:points)
   end
 
   def cp_budget
@@ -67,7 +67,7 @@ class CharacterSheet < ApplicationRecord
   end
 
   def cp_spent
-    total_attribute_points - total_defect_bp + equipment_entries.sum(:points) + (body + mind + soul) * 2
+    total_attribute_points - total_defect_bp + total_equipment_points + (body + mind + soul) * 2
   end
 
   def cp_balance

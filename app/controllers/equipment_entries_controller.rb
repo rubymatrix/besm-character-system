@@ -17,6 +17,16 @@ class EquipmentEntriesController < ApplicationController
     redirect_to @character_sheet, notice: "Equipment was removed."
   end
 
+  def publish
+    @equipment_entry = @character_sheet.equipment_entries.find(params[:id])
+
+    if @equipment_entry.update(draft: false)
+      redirect_to @character_sheet, notice: "Equipment was published."
+    else
+      redirect_to @character_sheet, alert: "Failed to publish equipment."
+    end
+  end
+
   private
 
   def set_character_sheet
@@ -24,6 +34,6 @@ class EquipmentEntriesController < ApplicationController
   end
 
   def equipment_entry_params
-    params.require(:equipment_entry).permit(:kind, :name, :summary, :points, :notes)
+    params.require(:equipment_entry).permit(:kind, :name, :summary, :points, :notes, :draft)
   end
 end

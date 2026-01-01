@@ -103,9 +103,9 @@ class CharacterSheetsController < ApplicationController
       :body, :mind, :soul, :melee_acv, :ranged_acv, :melee_dcv, :ranged_dcv,
       :health_points, :energy_points, :damage_multiplier,
       :game_notes,
-      character_attributes_attributes: [ :id, :name, :level, :points, :notes, :_destroy ],
+      character_attributes_attributes: [ :id, :name, :level, :points, :notes, :draft, :_destroy ],
       character_defects_attributes:    [ :id, :name, :rank, :bp, :notes, :_destroy ],
-      equipment_entries_attributes:    [ :id, :kind, :name, :summary, :points, :notes, :_destroy ]
+      equipment_entries_attributes:    [ :id, :kind, :name, :summary, :points, :notes, :draft, :_destroy ]
     )
   end
 end

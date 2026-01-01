@@ -17,7 +17,13 @@
     <label class="block text-xs font-medium text-zinc-500 mb-1">Notes</label>
     <%= af.text_field :notes, class: "form-input w-full" %>
   </div>
-  <div class="md:col-span-2 flex items-end justify-end">
+  <div class="md:col-span-6">
+    <label class="inline-flex items-center gap-2 text-xs font-medium text-zinc-500">
+      <%= af.check_box :draft, class: "rounded border-zinc-300 text-zinc-900 focus:ring-zinc-500" %>
+      Draft
+    </label>
+  </div>
+  <div class="md:col-span-6 flex items-end justify-end">
     <%= af.hidden_field :_destroy, value: false, data: { "nested-form-target": "destroyField" } %>
     <button type="button"
             class="rounded-xl px-3 py-2 text-xs font-medium bg-red-600 text-zinc-900 dark:text-white hover:bg-red-700"

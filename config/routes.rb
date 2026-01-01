@@ -43,7 +43,16 @@ Rails.application.routes.draw do
   resources :character_sheets do
     resources :character_point_adjustments, only: [ :create, :destroy ]
     resources :money_adjustments, only: [ :create, :destroy ]
-    resources :equipment_entries, only: [ :create, :destroy ]
+    resources :character_attributes, only: [] do
+      member do
+        patch :publish
+      end
+    end
+    resources :equipment_entries, only: [ :create, :destroy ] do
+      member do
+        patch :publish
+      end
+    end
     member do
       patch :append_note
       patch :update_notes
