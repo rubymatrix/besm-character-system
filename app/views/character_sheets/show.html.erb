@@ -222,10 +222,21 @@
                 { name: "Item of Power: Photon Katana", level: 1, points: 4 }
               ] %>
               <% attributes.each do |attr| %>
+                <% attr_name = attr.respond_to?(:name) ? attr.name : attr[:name] %>
+                <% attr_level = attr.respond_to?(:level) ? attr.level : attr[:level] %>
+                <% attr_points = attr.respond_to?(:points) ? attr.points : attr[:points] %>
+                <% notes = attr.respond_to?(:notes) ? attr.notes : attr[:notes] %>
                 <tr>
-                  <td class="px-5 py-3 font-medium text-zinc-900 dark:text-zinc-100"><%= attr[:name] %></td>
-                  <td class="px-5 py-3"><%= attr[:level] %></td>
-                  <td class="px-5 py-3"><%= attr[:points] %></td>
+                  <td class="px-5 py-3 font-medium text-zinc-900 dark:text-zinc-100">
+                    <%= attr_name %>
+                    <% if notes.present? %>
+                      <div class="mt-1 text-xs font-normal text-zinc-500 dark:text-zinc-400">
+                        <%= notes.to_s.gsub("\\n", "<br>").html_safe %>
+                      </div>
+                    <% end %>
+                  </td>
+                  <td class="px-5 py-3"><%= attr_level %></td>
+                  <td class="px-5 py-3"><%= attr_points %></td>
                 </tr>
               <% end %>
               </tbody>

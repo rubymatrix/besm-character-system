@@ -31,7 +31,9 @@ class CharacterSheet < ApplicationRecord
   # end
   # --- Back-compat helpers for the current view ---
   def attributes_list
-    character_attributes.map { |a| { name: a.name, level: a.level, points: a.cost_points } }
+    character_attributes.map do |a|
+      { name: a.name, level: a.level, points: a.cost_points, notes: a.notes }
+    end
   end
 
   def defects_list
