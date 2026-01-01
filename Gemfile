@@ -64,4 +64,4 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem "railsui", "~> 3.2"
+gem "railsui", "~> 3.3"
