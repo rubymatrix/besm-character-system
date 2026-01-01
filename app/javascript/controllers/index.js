@@ -9,8 +9,11 @@ import MarkdownEditorController from "./markdown_editor_controller.js";
 import CpModalController from "./cp_modal_controller.js";
 import MoneyModalController from "./money_modal_controller.js";
 import EquipmentModalController from "./equipment_modal_controller.js";
+import AttributeModalController from "./attribute_modal_controller.js";
 import NotesModalController from "./notes_modal_controller.js";
 import EditNotesModalController from "./edit_notes_modal_controller.js";
+import EditAttributeModalController from "./edit_attribute_modal_controller.js";
+import EditEquipmentModalController from "./edit_equipment_modal_controller.js";
 
 application.register("nested-form", NestedFormController);
 application.register("hello", HelloController);
@@ -18,7 +21,10 @@ application.register("markdown-editor", MarkdownEditorController);
 application.register("cp-modal", CpModalController);
 application.register("money-modal", MoneyModalController);
 application.register("equipment-modal", EquipmentModalController);
+application.register("attribute-modal", AttributeModalController);
 application.register("notes-modal", NotesModalController);
 application.register("edit-notes-modal", EditNotesModalController);
+application.register("edit-attribute-modal", EditAttributeModalController);
+application.register("edit-equipment-modal", EditEquipmentModalController);
 
 import "./railsui";

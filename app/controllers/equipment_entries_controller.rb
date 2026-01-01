@@ -17,6 +17,16 @@ class EquipmentEntriesController < ApplicationController
     redirect_to @character_sheet, notice: "Equipment was removed."
   end
 
+  def update
+    @equipment_entry = @character_sheet.equipment_entries.find(params[:id])
+
+    if @equipment_entry.update(equipment_entry_params)
+      redirect_to @character_sheet, notice: "Equipment was successfully updated."
+    else
+      redirect_to @character_sheet, alert: "Failed to update equipment: #{@equipment_entry.errors.full_messages.join(", ")}"
+    end
+  end
+
   def publish
     @equipment_entry = @character_sheet.equipment_entries.find(params[:id])
 
