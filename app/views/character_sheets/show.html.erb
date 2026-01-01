@@ -298,7 +298,7 @@
                   </div>
                   <% if e.summary.present? || e.notes.present? %>
                     <span class="text-zinc-600 dark:text-zinc-400 text-xs mt-0.5">
-                      <%= e.summary.presence || e.notes %>
+                      <%= e.summary.to_s.gsub("\n", "<br/>").html_safe.presence || e.notes.to_s.gsub("\n", "<br/>").html_safe %>
                     </span>
                   <% end %>
                 </div>
