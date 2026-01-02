@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_01_190519) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_01_191000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -47,6 +47,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_01_190519) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "adjusters", force: :cascade do |t|
+    t.string "adjustable_type", null: false
+    t.integer "adjustable_id", null: false
+    t.integer "stat", null: false
+    t.integer "amount", default: 0, null: false
+    t.string "condition"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["adjustable_type", "adjustable_id"], name: "index_adjusters_on_adjustable"
   end
 
   create_table "attribute_enhancements", force: :cascade do |t|
@@ -140,11 +151,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_01_190519) do
     t.text "game_notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "money"
     t.integer "melee_acv", default: 6, null: false
     t.integer "ranged_acv", default: 6, null: false
     t.integer "melee_dcv", default: 6, null: false
     t.integer "ranged_dcv", default: 6, null: false
-    t.integer "money"
     t.integer "absorb"
     t.integer "armor"
     t.index ["character_name"], name: "index_character_sheets_on_character_name"

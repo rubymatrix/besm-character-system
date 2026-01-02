@@ -37,6 +37,12 @@ class CharacterDefectsController < ApplicationController
   end
 
   def defect_params
-    params.require(:character_defect).permit(:name, :rank, :bp, :notes)
+    params.require(:character_defect).permit(
+      :name,
+      :rank,
+      :bp,
+      :notes,
+      adjusters_attributes: [:id, :stat, :amount, :condition, :_destroy]
+    )
   end
 end

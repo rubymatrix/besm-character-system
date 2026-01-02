@@ -1,0 +1,28 @@
+<% total = local_assigns.fetch(:total, 0).to_i %>
+<% items = local_assigns.fetch(:items, []) %>
+<% label = local_assigns.fetch(:label, "") %>
+<% show_badge = total != 0 %>
+<% visible_items = items.select { |item| item[:amount].to_i != 0 || item[:condition].to_s.present? } %>
+
+<% if show_badge %>
+  <% badge_classes = total.positive? ? "bg-zinc-900 text-green-500" : "bg-zinc-900 text-red-400" %>
+  <span class="absolute -top-2 -right-2 rounded-full px-2 py-0.5 text-xs font-semibold shadow <%= badge_classes %>">
+    <%= total.positive? ? "+#{total}" : total %>
+  </span>
+<% end %>
+
+<% if visible_items.any? %>
+  <div class="absolute left-1/2 top-full z-20 mt-2 w-56 -translate-x-1/2 rounded-lg border border-zinc-200 bg-white p-2 text-left text-xs text-zinc-700 shadow-lg opacity-0 invisible transition group-hover:opacity-100 group-hover:visible dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200">
+    <div class="mb-1 text-[10px] font-semibold uppercase tracking-wide text-zinc-500">Adjusters</div>
+    <div class="space-y-1">
+      <% visible_items.each do |item| %>
+        <% amount = item[:amount].to_i %>
+        <% next if amount == 0 && item[:condition].to_s.blank? %>
+        <% condition_text = item[:condition].to_s.presence || "always" %>
+        <div>
+          <%= "#{amount.positive? ? "+" : ""}#{amount} #{label} when: #{condition_text}" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

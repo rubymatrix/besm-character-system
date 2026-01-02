@@ -1,0 +1,27 @@
+<%# expects local :f (a form builder) %>
+<div class="space-y-3 rounded-xl border border-zinc-200 dark:border-zinc-800 p-4" data-controller="nested-form" data-nested-form-wrapper-selector-value="[data-adjuster-row]">
+  <div class="flex items-center justify-between">
+    <h4 class="text-sm font-semibold text-zinc-700 dark:text-zinc-200">Adjusters</h4>
+    <button type="button"
+            class="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors border border-zinc-200 dark:border-zinc-700"
+            data-action="nested-form#add"
+            data-nested-form-template-param="adjuster">
+      <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      Add Adjuster
+    </button>
+  </div>
+
+  <div class="space-y-3" data-nested-form-target="container">
+    <%= f.fields_for :adjusters do |af| %>
+      <%= render "adjuster_row", af: af %>
+    <% end %>
+  </div>
+
+  <template data-nested-form-target="template" data-template-name="adjuster">
+    <%= f.fields_for :adjusters, Adjuster.new, child_index: "NEW_RECORD" do |af| %>
+      <%= render "adjuster_row", af: af %>
+    <% end %>
+  </template>
+</div>

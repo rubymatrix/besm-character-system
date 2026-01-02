@@ -1,6 +1,8 @@
 # app/models/equipment_entry.rb
 class EquipmentEntry < ApplicationRecord
   belongs_to :character_sheet, inverse_of: :equipment_entries
+  has_many :adjusters, as: :adjustable, dependent: :destroy
+  accepts_nested_attributes_for :adjusters, allow_destroy: true, reject_if: ->(attrs) { attrs["stat"].blank? }
 
   enum :kind, {
     weapon: 0,

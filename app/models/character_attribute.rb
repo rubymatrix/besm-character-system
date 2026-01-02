@@ -1,6 +1,8 @@
 # app/models/character_attribute.rb
 class CharacterAttribute < ApplicationRecord
   belongs_to :character_sheet, inverse_of: :character_attributes
+  has_many :adjusters, as: :adjustable, dependent: :destroy
+  accepts_nested_attributes_for :adjusters, allow_destroy: true, reject_if: ->(attrs) { attrs["stat"].blank? }
 
   validates :name, presence: true
   validates :level, :points, numericality: { only_integer: true, greater_than_or_equal_to: 0 }

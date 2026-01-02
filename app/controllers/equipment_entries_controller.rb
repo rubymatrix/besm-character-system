@@ -44,6 +44,14 @@ class EquipmentEntriesController < ApplicationController
   end
 
   def equipment_entry_params
-    params.require(:equipment_entry).permit(:kind, :name, :summary, :points, :notes, :draft)
+    params.require(:equipment_entry).permit(
+      :kind,
+      :name,
+      :summary,
+      :points,
+      :notes,
+      :draft,
+      adjusters_attributes: [:id, :stat, :amount, :condition, :_destroy]
+    )
   end
 end

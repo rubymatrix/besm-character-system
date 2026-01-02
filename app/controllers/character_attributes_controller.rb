@@ -44,6 +44,13 @@ class CharacterAttributesController < ApplicationController
   end
 
   def character_attribute_params
-    params.require(:character_attribute).permit(:name, :level, :points, :notes, :draft)
+    params.require(:character_attribute).permit(
+      :name,
+      :level,
+      :points,
+      :notes,
+      :draft,
+      adjusters_attributes: [:id, :stat, :amount, :condition, :_destroy]
+    )
   end
 end

@@ -1,0 +1,26 @@
+<%# expects local :af (a form builder) %>
+<div data-adjuster-row class="grid md:grid-cols-12 gap-3 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3">
+  <div class="md:col-span-4">
+    <%= af.label :stat, "Stat", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+    <%= af.select :stat,
+                  Adjuster.stats.keys.map { |key| [key.humanize, key] },
+                  { include_blank: "Select stat" },
+                  class: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
+  </div>
+  <div class="md:col-span-2">
+    <%= af.label :amount, "Amount", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+    <%= af.number_field :amount, class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
+  </div>
+  <div class="md:col-span-6">
+    <%= af.label :condition, "Condition", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+    <%= af.text_field :condition, placeholder: "e.g. While berserk", class: "mt-1 px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" %>
+  </div>
+  <div class="md:col-span-12 flex items-end justify-end">
+    <%= af.hidden_field :_destroy, value: false, data: { "nested-form-target": "destroyField" } %>
+    <button type="button"
+            class="rounded-xl px-3 py-2 text-xs font-medium bg-red-600 text-zinc-900 dark:text-white hover:bg-red-700"
+            data-action="nested-form#remove">
+      Remove
+    </button>
+  </div>
+</div>

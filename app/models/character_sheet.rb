@@ -107,4 +107,25 @@ class CharacterSheet < ApplicationRecord
   def total_cp
     cp_budget
   end
+
+  def all_adjusters
+    @all_adjusters ||= (
+      character_attributes.includes(:adjusters).flat_map(&:adjusters) +
+      character_defects.includes(:adjusters).flat_map(&:adjusters) +
+      equipment_entries.includes(:adjusters).flat_map(&:adjusters)
+    )
+  end
+
+  def adjuster_summary_by_stat
+    summaries = Hash.new { |hash, key| hash[key] = { total: 0, items: [] } }
+
+    all_adjusters.each do |adjuster|
+      stat = adjuster.stat
+      amount = adjuster.amount.to_i
+      summaries[stat][:total] += amount
+      summaries[stat][:items] << { amount: amount, condition: adjuster.condition.to_s }
+    end
+
+    summaries
+  end
 end
