@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Besm" %></title>
+    <% page_title = content_for?(:title) ? yield(:title) : nil %>
+    <title><%= [page_title, Railsui.config.application_name].compact.join(" | ") %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">

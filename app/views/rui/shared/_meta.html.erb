@@ -30,14 +30,18 @@ Images:
 Swap your own images for placeholder ones inside the "assets/images/railsui/meta" folder Rails UI copied to your app (jpg, png).
 %>
 
+<% page_title = content_for?(:title) ? yield(:title) : Railsui.config.application_name %>
+<% page_description = content_for?(:meta_description) ? yield(:meta_description) : "Character sheets and tools for Big Eyes, Small Mouth." %>
+
 <%= display_meta_tags(
-  site: "#{Railsui.config.application_name.parameterize}.com", # <!-- change -->,
+  site: Railsui.config.application_name,
   reverse: true,
   viewport: "width=device-width, initial-scale=1",
-  title: "CHANGE ME",
+  title: page_title,
+  description: page_description,
   canonical: request.original_url,
   og: {
-    title: Railsui.config.application_name,
+    title: :title,
     type: "website",
     url: request.original_url,
     image: [{
@@ -45,25 +49,24 @@ Swap your own images for placeholder ones inside the "assets/images/railsui/meta
       width: 1200,
       height: 630
     }],
-    site_name: "#{Railsui.config.application_name.parameterize}.com", # <!-- change -->
-    description: "CHANGE ME",
+    site_name: Railsui.config.application_name,
+    description: :description
   },
   twitter: {
     title: :title,
     description: :description,
-    card:  "summary",
+    card: "summary",
     image: {
       _: image_url("railsui/meta/opengraph-mark.jpg"),
-      width:  400,
-      height: 400,
+      width: 400,
+      height: 400
     }
   },
   author: Railsui.config.application_name,
-  description: "CHANGE ME",
   icon: [
     {
       href: image_url("railsui/meta/favicon.svg"),
-      sizes: 'any',
+      sizes: "any",
       type: "image/svg+xml"
     },
     {
@@ -73,18 +76,18 @@ Swap your own images for placeholder ones inside the "assets/images/railsui/meta
     },
     {
       href: image_url("railsui/meta/android-chrome-192x192.png"),
-      sizes: '192x192',
+      sizes: "192x192",
       type: "image/png"
     },
     {
       href: image_url("railsui/meta/android-chrome-512x512.png"),
-      sizes: '512x512',
+      sizes: "512x512",
       type: "image/png"
     },
     {
       href: image_url("railsui/meta/apple-touch-icon.png"),
-      sizes: '180x180',
+      sizes: "180x180",
       type: "image/png"
     }
   ])
-  %>
+%>

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <% page_title = content_for?(:title) ? yield(:title) : nil %>
     <title>
-      <%= Railsui.config.application_name || "Rails UI" %>
+      <%= [page_title, Railsui.config.application_name].compact.join(" | ") %>
     </title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
