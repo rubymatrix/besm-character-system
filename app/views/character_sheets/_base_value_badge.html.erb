@@ -1,0 +1,7 @@
+<% value = local_assigns.fetch(:value, 0) %>
+<% show = local_assigns.fetch(:show, true) %>
+<% if show %>
+  <span class="absolute -top-2 left-0 -translate-x-2 -translate-y-2 rounded-full px-2 py-0.5 text-xs font-semibold shadow bg-zinc-900 text-zinc-200">
+    <%= value %>
+  </span>
+<% end %>

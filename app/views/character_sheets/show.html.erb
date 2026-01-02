@@ -176,21 +176,27 @@
               <div class="col-span-2 flex justify-center">
                 <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 min-h-[96px] w-full max-w-[160px] flex flex-col justify-center relative group">
                   <div class="text-xs uppercase tracking-wider text-zinc-500">Body</div>
-                  <div class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100"><%= body %></div>
                   <% body_adjusters = adjuster_summaries["body"] || {} %>
+                  <% body_total = body.to_i + body_adjusters[:total].to_i %>
+                  <div class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100"><%= body_total %></div>
+                  <%= render "base_value_badge", value: body, show: body_adjusters[:total].to_i != 0 %>
                   <%= render "stat_adjuster", total: body_adjusters[:total], items: body_adjusters[:items], label: "Body" %>
                 </div>
               </div>
               <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 min-h-[96px] flex flex-col justify-center relative group">
                 <div class="text-xs uppercase tracking-wider text-zinc-500">Mind</div>
-                <div class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100"><%= mind %></div>
                 <% mind_adjusters = adjuster_summaries["mind"] || {} %>
+                <% mind_total = mind.to_i + mind_adjusters[:total].to_i %>
+                <div class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100"><%= mind_total %></div>
+                <%= render "base_value_badge", value: mind, show: mind_adjusters[:total].to_i != 0 %>
                 <%= render "stat_adjuster", total: mind_adjusters[:total], items: mind_adjusters[:items], label: "Mind" %>
               </div>
               <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 min-h-[96px] flex flex-col justify-center relative group">
                 <div class="text-xs uppercase tracking-wider text-zinc-500">Soul</div>
-                <div class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100"><%= soul %></div>
                 <% soul_adjusters = adjuster_summaries["soul"] || {} %>
+                <% soul_total = soul.to_i + soul_adjusters[:total].to_i %>
+                <div class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100"><%= soul_total %></div>
+                <%= render "base_value_badge", value: soul, show: soul_adjusters[:total].to_i != 0 %>
                 <%= render "stat_adjuster", total: soul_adjusters[:total], items: soul_adjusters[:items], label: "Soul" %>
               </div>
             </div>
@@ -267,60 +273,88 @@
             <!-- Row 1 -->
             <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 relative group">
               <div class="text-[10px] uppercase tracking-[0.15em] text-zinc-500 font-bold mb-1">Health</div>
-              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.health_points || 0 %></div>
               <% health_adjusters = adjuster_summaries["health"] || {} %>
+              <% health_base = @character_sheet&.health_points || 0 %>
+              <% health_total = health_base.to_i + health_adjusters[:total].to_i %>
+              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= health_total %></div>
+              <%= render "base_value_badge", value: health_base, show: health_adjusters[:total].to_i != 0 %>
               <%= render "stat_adjuster", total: health_adjusters[:total], items: health_adjusters[:items], label: "Health" %>
             </div>
             <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 relative group">
               <div class="text-[10px] uppercase tracking-[0.15em] text-zinc-500 font-bold mb-1">Energy</div>
-              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.energy_points || 0 %></div>
               <% energy_adjusters = adjuster_summaries["energy"] || {} %>
+              <% energy_base = @character_sheet&.energy_points || 0 %>
+              <% energy_total = energy_base.to_i + energy_adjusters[:total].to_i %>
+              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= energy_total %></div>
+              <%= render "base_value_badge", value: energy_base, show: energy_adjusters[:total].to_i != 0 %>
               <%= render "stat_adjuster", total: energy_adjusters[:total], items: energy_adjusters[:items], label: "Energy" %>
             </div>
             <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 relative group">
               <div class="text-[10px] uppercase tracking-[0.15em] text-zinc-500 font-bold mb-1">Absorb</div>
-              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.absorb || 0 %></div>
               <% absorb_adjusters = adjuster_summaries["absorb"] || {} %>
+              <% absorb_base = @character_sheet&.absorb || 0 %>
+              <% absorb_total = absorb_base.to_i + absorb_adjusters[:total].to_i %>
+              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= absorb_total %></div>
+              <%= render "base_value_badge", value: absorb_base, show: absorb_adjusters[:total].to_i != 0 %>
               <%= render "stat_adjuster", total: absorb_adjusters[:total], items: absorb_adjusters[:items], label: "Absorb" %>
             </div>
 
             <!-- Row 2 -->
             <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 relative group">
               <div class="text-[10px] uppercase tracking-[0.15em] text-zinc-500 font-bold mb-1">Melee DCV</div>
-              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.melee_dcv || 0 %></div>
               <% melee_dcv_adjusters = adjuster_summaries["melee_dcv"] || {} %>
+              <% melee_dcv_base = @character_sheet&.melee_dcv || 0 %>
+              <% melee_dcv_total = melee_dcv_base.to_i + melee_dcv_adjusters[:total].to_i %>
+              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= melee_dcv_total %></div>
+              <%= render "base_value_badge", value: melee_dcv_base, show: melee_dcv_adjusters[:total].to_i != 0 %>
               <%= render "stat_adjuster", total: melee_dcv_adjusters[:total], items: melee_dcv_adjusters[:items], label: "Melee DCV" %>
             </div>
             <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 relative group">
               <div class="text-[10px] uppercase tracking-[0.15em] text-zinc-500 font-bold mb-1">Ranged DCV</div>
-              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.ranged_dcv || 0 %></div>
               <% ranged_dcv_adjusters = adjuster_summaries["ranged_dcv"] || {} %>
+              <% ranged_dcv_base = @character_sheet&.ranged_dcv || 0 %>
+              <% ranged_dcv_total = ranged_dcv_base.to_i + ranged_dcv_adjusters[:total].to_i %>
+              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= ranged_dcv_total %></div>
+              <%= render "base_value_badge", value: ranged_dcv_base, show: ranged_dcv_adjusters[:total].to_i != 0 %>
               <%= render "stat_adjuster", total: ranged_dcv_adjusters[:total], items: ranged_dcv_adjusters[:items], label: "Ranged DCV" %>
             </div>
             <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 relative group">
               <div class="text-[10px] uppercase tracking-[0.15em] text-zinc-500 font-bold mb-1">Armor</div>
-              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.armor || 0 %></div>
               <% armor_adjusters = adjuster_summaries["armor"] || {} %>
+              <% armor_base = @character_sheet&.armor || 0 %>
+              <% armor_total = armor_base.to_i + armor_adjusters[:total].to_i %>
+              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= armor_total %></div>
+              <%= render "base_value_badge", value: armor_base, show: armor_adjusters[:total].to_i != 0 %>
               <%= render "stat_adjuster", total: armor_adjusters[:total], items: armor_adjusters[:items], label: "Armor" %>
             </div>
 
             <!-- Row 3 -->
             <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 relative group">
               <div class="text-[10px] uppercase tracking-[0.15em] text-zinc-500 font-bold mb-1">Melee ACV</div>
-              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.melee_acv || 0 %></div>
               <% melee_acv_adjusters = adjuster_summaries["melee_acv"] || {} %>
+              <% melee_acv_base = @character_sheet&.melee_acv || 0 %>
+              <% melee_acv_total = melee_acv_base.to_i + melee_acv_adjusters[:total].to_i %>
+              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= melee_acv_total %></div>
+              <%= render "base_value_badge", value: melee_acv_base, show: melee_acv_adjusters[:total].to_i != 0 %>
               <%= render "stat_adjuster", total: melee_acv_adjusters[:total], items: melee_acv_adjusters[:items], label: "Melee ACV" %>
             </div>
             <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 relative group">
               <div class="text-[10px] uppercase tracking-[0.15em] text-zinc-500 font-bold mb-1">Ranged ACV</div>
-              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.ranged_acv || 0 %></div>
               <% ranged_acv_adjusters = adjuster_summaries["ranged_acv"] || {} %>
+              <% ranged_acv_base = @character_sheet&.ranged_acv || 0 %>
+              <% ranged_acv_total = ranged_acv_base.to_i + ranged_acv_adjusters[:total].to_i %>
+              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= ranged_acv_total %></div>
+              <%= render "base_value_badge", value: ranged_acv_base, show: ranged_acv_adjusters[:total].to_i != 0 %>
               <%= render "stat_adjuster", total: ranged_acv_adjusters[:total], items: ranged_acv_adjusters[:items], label: "Ranged ACV" %>
             </div>
             <div class="text-center border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 relative group">
               <div class="text-[10px] uppercase tracking-[0.15em] text-zinc-500 font-bold mb-1">DM</div>
-              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= @character_sheet&.damage_multiplier || "x2" %></div>
               <% damage_multiplier_adjusters = adjuster_summaries["damage_multiplier"] || {} %>
+              <% damage_multiplier_base = (@character_sheet&.damage_multiplier || "x2").to_s %>
+              <% damage_multiplier_value = damage_multiplier_base.delete_prefix("x").to_i %>
+              <% damage_multiplier_total = damage_multiplier_value + damage_multiplier_adjusters[:total].to_i %>
+              <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100"><%= "x#{damage_multiplier_total}" %></div>
+              <%= render "base_value_badge", value: damage_multiplier_base, show: damage_multiplier_adjusters[:total].to_i != 0 %>
               <%= render "stat_adjuster", total: damage_multiplier_adjusters[:total], items: damage_multiplier_adjusters[:items], label: "DM" %>
             </div>
           </div>
